@@ -16,8 +16,11 @@ func (s *service) router() chi.Router {
 			handlers.CtxLog(s.log),
 		),
 	)
-	r.Route("/integrations/review-api", func(r chi.Router) {
-		// configure endpoints here
+	r.Route("/products/{product_id}/reviews", func(r chi.Router) {
+		r.Post("/", helpers.ErrorHandler(reviewHandler.CreateReview))
+		r.Get("/", helpers.ErrorHandler(reviewHandler.GetReviews))
+		r.Delete("/", helpers.ErrorHandler(reviewHandler.DeleteReviews))
+		r.Patch("/{review_id}", helpers.ErrorHandler(reviewHandler.UpdateReviewById))
 	})
 
 	return r

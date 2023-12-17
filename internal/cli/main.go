@@ -8,6 +8,7 @@ import (
 	"review_api/internal/service"
 )
 
+// Run Do not change smth
 func Run(args []string) bool {
 	log := logan.New()
 
