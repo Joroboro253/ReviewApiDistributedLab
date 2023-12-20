@@ -3,14 +3,14 @@ log:
   disable_sentry: true
 
 db:
-  url: db_url
+  url: postgres://postgres:bestuser@localhost:5432/reviewApiStruct?sslmode=disable
 
 listener:
   addr: :8000
 
 cop:
   disabled: true
-  endpoint: "http://..."
-  upstream: "http://..."
+  endpoint: "http://localhost:90"
+  upstream: "http://localhost:88"
   service_name: review-api
   service_port: 80
