@@ -1,9 +1,11 @@
 package resources
 
+import "review_api/internal/data"
+
 type ResponseData struct {
-	Type       string `json:"type"`
-	ID         int    `json:"id"`
-	Attributes Review `json:"attributes"`
+	Type       string      `json:"type"`
+	ID         int         `json:"id"`
+	Attributes data.Review `json:"attributes"`
 }
 
 type ResponseBody struct {

@@ -3,16 +3,16 @@ package helpers
 import (
 	"encoding/json"
 	"net/http"
-	"review_api/resources"
+	"review_api/internal/data"
 )
 
-func GenerateReviewResponse(w http.ResponseWriter, review resources.Review) {
+func GenerateReviewResponse(w http.ResponseWriter, review data.Review) {
 	// Устанавливаем заголовок Content-Type для ответа
 	w.Header().Set("Content-Type", "application/json")
 
 	// Создаем структуру для ответа
 	response := struct {
-		Data resources.Review `json:"data"`
+		Data data.Review `json:"data"`
 	}{
 		Data: review,
 	}

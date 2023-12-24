@@ -1,6 +1,7 @@
 package service
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"net"
 	"net/http"
 	"review_api/internal/config"
@@ -10,10 +11,12 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
+// It was changed
 type service struct {
 	log      *logan.Entry
 	copus    types.Copus
 	listener net.Listener
+	db       *pgdb.DB
 }
 
 func (s *service) run() error {
@@ -32,6 +35,7 @@ func newService(cfg config.Config) *service {
 		log:      cfg.Log(),
 		copus:    cfg.Copus(),
 		listener: cfg.Listener(),
+		db:       cfg.DB(),
 	}
 }
 

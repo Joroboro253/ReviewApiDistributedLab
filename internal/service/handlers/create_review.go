@@ -3,47 +3,70 @@ package handlers
 import (
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"log"
 	"net/http"
-	"review_api/internal/data/pg"
+	"review_api/internal/data"
 	"review_api/internal/service/helpers"
 	"review_api/internal/service/requests"
-	"review_api/resources"
 )
 
+const createReview = "createReview"
+
 func CreateReview(w http.ResponseWriter, r *http.Request) {
-	db, _ := helpers.GetDBFromContext(r) // Предполагаем, что функция GetDBFromContext определена в helpers
+	log.Print("CreateReview")
 
-	logger := log.Default() // Использование стандартного логгера
-
-	productId, apiErr := helpers.GetProductIDFromURL(r)
-	if apiErr != nil {
-		ape.RenderErr(w, problems.BadRequest(apiErr)...)
-		logger.Println("Error getting product ID from URL:", apiErr)
+	request, err := requests.NewCreateReviewRequest(r)
+	if err != nil {
+		log.Print("Wrong request")
+		helpers.Log(r).WithError(err).Info("Wrong request")
+		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	reqBody, apiErr := requests.DecodeReviewRequestBody(r)
-	if apiErr != nil {
-		ape.RenderErr(w, problems.BadRequest(apiErr)...)
-		logger.Printf("Error decoding review request body: %v\n", apiErr)
+	reviewQ, ok := helpers.ReviewsQ(r).(data.ReviewQ)
+	if !ok || reviewQ == nil {
+		helpers.Log(r).WithError(err).Error("ReviewQ is not available in the request context")
+		errors.Wrap(err, "failed to insert review (helpers.ReviewsQ(r))")
 		return
 	}
 
-	if reqBody.Data.Type != "review" {
-		apiErr := resources.NewAPIError(http.StatusBadRequest, "StatusBadRequest", "Incorrect data type")
-		ape.RenderErr(w, problems.BadRequest(apiErr)...)
-		logger.Printf("Incorrect data type: %v\n", apiErr)
-		return
-	}
+	var resultReview data.Review
+	log.Print("Transaction")
+	err = helpers.ReviewsQ(r).Transaction(func(q data.ReviewQ) error {
+		review := data.Review{
+			ProductID: request.Data.ProductID,
+			UserID:    request.Data.UserID,
+			Content:   request.Data.Content,
+			Rating:    request.Data.Rating,
+		}
 
-	reviewService := pg.NewReviewService(db)
-	review, apiErr := reviewService.CreateReview(productId, reqBody)
-	if apiErr != nil {
+		resultReview, err = q.Insert(review)
+		if err != nil {
+			return errors.Wrap(err, "failed to insert review")
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		helpers.Log(r).WithError(err).Error("failed to create review")
 		ape.RenderErr(w, problems.InternalError())
-		logger.Printf("Failed to create review: %v\n", apiErr)
 		return
 	}
 
-	helpers.GenerateReviewResponse(w, review)
+	reviewModel := data.Review{
+		ID:        resultReview.ID,
+		ProductID: resultReview.ProductID,
+		UserID:    resultReview.UserID,
+		Content:   resultReview.Content,
+		Rating:    resultReview.Rating,
+		CreatedAt: resultReview.CreatedAt,
+		UpdatedAt: resultReview.UpdatedAt,
+	}
+
+	result := data.ReviewResponse{
+		Data: reviewModel,
+	}
+	ape.Render(w, result)
 }

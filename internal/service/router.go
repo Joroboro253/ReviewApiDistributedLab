@@ -3,7 +3,9 @@ package service
 import (
 	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/ape"
+	"review_api/internal/data/pg"
 	"review_api/internal/service/handlers"
+	"review_api/internal/service/helpers"
 )
 
 func (s *service) router() chi.Router {
@@ -13,7 +15,9 @@ func (s *service) router() chi.Router {
 		ape.RecoverMiddleware(s.log),
 		ape.LoganMiddleware(s.log),
 		ape.CtxMiddleware(
-			handlers.CtxLog(s.log),
+			helpers.CtxLog(s.log),
+			helpers.CtxReviewsQ(pg.NewReviewsQ(s.db)),
+			helpers.CtxReviewRequestsQ(pg.NewReviewRequestsQ(s.db)),
 		),
 	)
 

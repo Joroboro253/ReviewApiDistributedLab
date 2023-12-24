@@ -2,15 +2,24 @@ package requests
 
 import (
 	"encoding/json"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"log"
 	"net/http"
-	"review_api/resources"
+	"review_api/internal/data"
 )
 
+type CreateReviewRequest struct {
+	Data data.Review `json:"data"`
+}
+
 // Здесь происходит сам запрос. Нужно проверить на роботоспособность
-func DecodeReviewRequestBody(r *http.Request) (resources.ReviewRequest, *resources.APIError) {
-	var reqBody resources.ReviewRequest
-	if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
-		return reqBody, resources.NewAPIError(http.StatusBadRequest, "Error during JSON decoding", err.Error())
+func NewCreateReviewRequest(r *http.Request) (CreateReviewRequest, error) {
+	var request CreateReviewRequest
+	log.Printf("NewCreateReviewRequests")
+
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		return request, errors.Wrap(err, "failed to unmarshal")
 	}
-	return reqBody, nil
+
+	return request, nil
 }
