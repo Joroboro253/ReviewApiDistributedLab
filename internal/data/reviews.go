@@ -8,7 +8,7 @@ import (
 type ReviewQ interface {
 	New() ReviewQ
 
-	Get(reviewId int64) (*Review, error)
+	Get() (*Review, error)
 
 	Delete(blobId int64) error
 	Select() ([]Review, error)
@@ -16,6 +16,8 @@ type ReviewQ interface {
 	Transaction(fn func(q ReviewQ) error) error
 
 	Insert(data Review) (Review, error)
+
+	FilterByID(id ...int64) ReviewQ
 }
 
 type Review struct {

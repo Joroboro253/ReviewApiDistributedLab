@@ -23,7 +23,7 @@ func (s *service) router() chi.Router {
 
 	r.Route("/products/{product_id}/reviews", func(r chi.Router) {
 		r.Post("/", handlers.CreateReview)
-		//r.Get("/", helpers.ErrorHandler(reviewHandler.GetReviews))
+		r.Get("/", handlers.GetReviews)
 		//r.Delete("/", helpers.ErrorHandler(reviewHandler.DeleteReviews))
 		//r.Patch("/{review_id}", helpers.ErrorHandler(reviewHandler.UpdateReviewById))
 	})

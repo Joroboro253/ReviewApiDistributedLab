@@ -24,9 +24,8 @@ func (q *reviewQImpl) New() data.ReviewQ {
 	return NewReviewsQ(q.db)
 }
 
-func (q *reviewQImpl) Get(reviewId int64) (*data.Review, error) {
+func (q *reviewQImpl) Get() (*data.Review, error) {
 	var result data.Review
-	q.sql = q.sql.Where(sq.Eq{"n.id": reviewId})
 	err := q.db.Get(&result, q.sql)
 	if err == sql.ErrNoRows {
 		return nil, nil

@@ -19,3 +19,7 @@ type SuccessResponse struct {
 		Attributes interface{} `json:"attributes,omitempty"`
 	} `json:"data"`
 }
+
+type ReviewListResponse struct {
+	Data []data.Review `json:"data"`
+}
