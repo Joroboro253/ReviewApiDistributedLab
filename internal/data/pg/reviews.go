@@ -8,6 +8,8 @@ import (
 	"review_api/internal/data"
 )
 
+const reviewsTableName = "reviews"
+
 func NewReviewsQ(db *pgdb.DB) data.ReviewQ {
 	return &reviewQImpl{
 		db:  db.Clone(),
@@ -34,8 +36,14 @@ func (q *reviewQImpl) Get() (*data.Review, error) {
 	return &result, err
 }
 
-func (q *reviewQImpl) Delete(reviewId int64) error {
+func (q *reviewQImpl) DeleteByReviewId(reviewId int64) error {
 	stmt := sq.Delete(reviewsTableName).Where("id = ?", reviewId)
+	err := q.db.Exec(stmt)
+	return err
+}
+
+func (q *reviewQImpl) DeleteAllByProductId(reviewId int64) error {
+	stmt := sq.Delete(reviewsTableName).Where("product_id = ?", reviewId)
 	err := q.db.Exec(stmt)
 	return err
 }

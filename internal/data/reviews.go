@@ -9,8 +9,8 @@ type ReviewQ interface {
 	New() ReviewQ
 
 	Get() (*Review, error)
-
-	Delete(blobId int64) error
+	DeleteAllByProductId(reviewId int64) error
+	DeleteByReviewId(reviewId int64) error
 	Select() ([]Review, error)
 
 	Transaction(fn func(q ReviewQ) error) error

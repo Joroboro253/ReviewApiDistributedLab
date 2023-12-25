@@ -17,14 +17,14 @@ func (s *service) router() chi.Router {
 		ape.CtxMiddleware(
 			helpers.CtxLog(s.log),
 			helpers.CtxReviewsQ(pg.NewReviewsQ(s.db)),
-			helpers.CtxReviewRequestsQ(pg.NewReviewRequestsQ(s.db)),
 		),
 	)
 
 	r.Route("/products/{product_id}/reviews", func(r chi.Router) {
 		r.Post("/", handlers.CreateReview)
 		r.Get("/", handlers.GetReviews)
-		//r.Delete("/", helpers.ErrorHandler(reviewHandler.DeleteReviews))
+		r.Delete("/", handlers.DeleteAllByProductId)
+		r.Delete("/{review_id}", handlers.DeleteReviewByID)
 		//r.Patch("/{review_id}", helpers.ErrorHandler(reviewHandler.UpdateReviewById))
 	})
 
