@@ -23,3 +23,12 @@ type ReviewUpdateRequest struct {
 		Attributes ReviewUpdate `json:"attributes"`
 	} `json:"data"`
 }
+
+type UpdateReviewRequest struct {
+	Data struct {
+		ProductID *int     `json:"product_id,omitempty"`
+		UserID    *int     `json:"user_id,omitempty"`
+		Content   *string  `json:"content,omitempty"`
+		Rating    *float32 `json:"rating,omitempty"`
+	} `json:"data"`
+}

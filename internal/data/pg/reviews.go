@@ -5,6 +5,7 @@ import (
 	"fmt"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"review_api/internal/data"
 )
 
@@ -20,6 +21,24 @@ func NewReviewsQ(db *pgdb.DB) data.ReviewQ {
 type reviewQImpl struct {
 	db  *pgdb.DB
 	sql sq.SelectBuilder
+}
+
+func (q *reviewQImpl) Update(reviewID int64, updateData map[string]interface{}) (data.Review, error) {
+	if len(updateData) == 0 {
+		return data.Review{}, errors.New("no data to update")
+	}
+
+	stmt := sq.Update(reviewsTableName).
+		SetMap(updateData).
+		Where(sq.Eq{"id": reviewID}).
+		Suffix("RETURNING id, product_id, user_id, content, rating, created_at, updated_at")
+
+	var updatedReview data.Review
+	err := q.db.Get(&updatedReview, stmt)
+	if err != nil {
+		return data.Review{}, err
+	}
+	return updatedReview, nil
 }
 
 func (q *reviewQImpl) New() data.ReviewQ {

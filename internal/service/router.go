@@ -25,7 +25,7 @@ func (s *service) router() chi.Router {
 		r.Get("/", handlers.GetReviews)
 		r.Delete("/", handlers.DeleteAllByProductId)
 		r.Delete("/{review_id}", handlers.DeleteReviewByID)
-		//r.Patch("/{review_id}", helpers.ErrorHandler(reviewHandler.UpdateReviewById))
+		r.Patch("/{review_id}", handlers.UpdateReview)
 	})
 
 	return r

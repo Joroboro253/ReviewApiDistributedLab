@@ -12,7 +12,7 @@ type ReviewQ interface {
 	DeleteAllByProductId(reviewId int64) error
 	DeleteByReviewId(reviewId int64) error
 	Select() ([]Review, error)
-
+	Update(reviewID int64, updateData map[string]interface{}) (Review, error)
 	Transaction(fn func(q ReviewQ) error) error
 
 	Insert(data Review) (Review, error)
