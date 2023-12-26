@@ -36,9 +36,6 @@ func UpdateReview(w http.ResponseWriter, r *http.Request) {
 	if request.Data.Content != "" {
 		updateData["content"] = request.Data.Content
 	}
-	if request.Data.Rating != 0 {
-		updateData["rating"] = request.Data.Rating
-	}
 
 	updatedReview, err := reviewQ.Update(reviewID, updateData)
 	if err != nil {

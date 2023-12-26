@@ -1,7 +1,6 @@
 package pg
 
 import (
-	"database/sql"
 	"fmt"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -31,7 +30,7 @@ func (q *reviewQImpl) Update(reviewID int64, updateData map[string]interface{}) 
 	stmt := sq.Update(reviewsTableName).
 		SetMap(updateData).
 		Where(sq.Eq{"id": reviewID}).
-		Suffix("RETURNING id, product_id, user_id, content, rating, created_at, updated_at")
+		Suffix("RETURNING id, product_id, user_id, content, created_at, updated_at")
 
 	var updatedReview data.Review
 	err := q.db.Get(&updatedReview, stmt)
@@ -45,14 +44,23 @@ func (q *reviewQImpl) New() data.ReviewQ {
 	return NewReviewsQ(q.db)
 }
 
-func (q *reviewQImpl) Get() (*data.Review, error) {
-	var result data.Review
-	err := q.db.Get(&result, q.sql)
-	if err == sql.ErrNoRows {
-		return nil, nil
+func (q *reviewQImpl) Get(reviewID int64) (*data.Review, error) {
+	var review data.Review
+
+	query, args, err := sq.Select("*").
+		From("reviews").
+		Where(sq.Eq{"id": reviewID}).
+		ToSql()
+	if err != nil {
+		return nil, err
 	}
 
-	return &result, err
+	err = q.db.GetRaw(&review, query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return &review, nil
 }
 
 func (q *reviewQImpl) DeleteByReviewId(reviewId int64) error {
@@ -67,10 +75,32 @@ func (q *reviewQImpl) DeleteAllByProductId(reviewId int64) error {
 	return err
 }
 
-func (q *reviewQImpl) Select() ([]data.Review, error) {
-	var result []data.Review
-	err := q.db.Select(&result, q.sql)
-	return result, err
+func (q *reviewQImpl) Select(sortBy string, page, limit int) ([]data.Review, error) {
+	offset := (page - 1) * limit
+	query := q.sql.Limit(uint64(limit)).Offset(uint64(offset))
+	switch sortBy {
+	case "date":
+		query = query.OrderBy("created_at DESC")
+	case "rating":
+		query = query.OrderBy("rating DESC")
+	case "has_rating":
+		query = query.OrderBy("CASE WHEN rating IS NOT NULL THEN 1 ELSE 0 END DESC, rating DESC")
+	default:
+		query = query.OrderBy("created_at DESC")
+	}
+	// Sort
+	// Pagination
+	if page > 0 && limit > 0 {
+		offset := (page - 1) * limit
+		query = query.Limit(uint64(limit)).Offset(uint64(offset))
+	}
+
+	var reviews []data.Review
+	err := q.db.Select(&reviews, query)
+	if err != nil {
+		return nil, err
+	}
+	return reviews, err
 }
 
 func (q *reviewQImpl) Transaction(fn func(q data.ReviewQ) error) error {
@@ -81,13 +111,10 @@ func (q *reviewQImpl) Transaction(fn func(q data.ReviewQ) error) error {
 
 func (q *reviewQImpl) Insert(review data.Review) (data.Review, error) {
 	// Explicitly specifying the columns and values to ensure correct mapping
-	if err := review.Validate(); err != nil {
-		return data.Review{}, err
-	}
 	stmt := sq.Insert(reviewsTableName).
-		Columns("product_id", "user_id", "content", "rating", "created_at", "updated_at").
-		Values(review.ProductID, review.UserID, review.Content, review.Rating, sq.Expr("CURRENT_TIMESTAMP"), sq.Expr("CURRENT_TIMESTAMP")).
-		Suffix("RETURNING id, product_id, user_id, content, rating, created_at, updated_at")
+		Columns("product_id", "user_id", "content", "created_at", "updated_at").
+		Values(review.ProductID, review.UserID, review.Content, sq.Expr("CURRENT_TIMESTAMP"), sq.Expr("CURRENT_TIMESTAMP")).
+		Suffix("RETURNING id, product_id, user_id, content, created_at, updated_at")
 
 	var result data.Review
 	err := q.db.Get(&result, stmt)

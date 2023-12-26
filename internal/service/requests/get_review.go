@@ -10,7 +10,10 @@ import (
 )
 
 type GetReviewRequest struct {
-	ReviewID int64 `url:"-"`
+	ReviewID int64  `url:"-"`
+	SortBy   string `url:"sort"`
+	Page     int    `url:"page"`
+	Limit    int    `url:"limit"`
 }
 
 func NewGetReviewRequest(r *http.Request) (GetReviewRequest, error) {

@@ -38,7 +38,6 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 			ProductID: request.Data.ProductID,
 			UserID:    request.Data.UserID,
 			Content:   request.Data.Content,
-			Rating:    request.Data.Rating,
 		}
 
 		resultReview, err = q.Insert(review)
@@ -60,7 +59,6 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 		ProductID: resultReview.ProductID,
 		UserID:    resultReview.UserID,
 		Content:   resultReview.Content,
-		Rating:    resultReview.Rating,
 		CreatedAt: resultReview.CreatedAt,
 		UpdatedAt: resultReview.UpdatedAt,
 	}

@@ -9,17 +9,9 @@ import (
 )
 
 func DeleteAllByProductId(w http.ResponseWriter, r *http.Request) {
-	// Assuming NewDeleteReviewRequest parses the request and extracts the review ID
 	request, err := requests.DeleteReviewRequestByProductID(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
-	_, err = helpers.ReviewsQ(r).FilterByID(request.ProductID).Get()
-	if err != nil {
-		helpers.Log(r).WithError(err).Error("failed to get product from DB")
-		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 

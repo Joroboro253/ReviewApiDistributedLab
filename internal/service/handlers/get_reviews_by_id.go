@@ -4,46 +4,35 @@ import (
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"net/http"
-	"review_api/internal/data"
 	"review_api/internal/service/helpers"
 	"review_api/internal/service/requests"
 	"review_api/resources"
 )
 
 func GetReviews(w http.ResponseWriter, r *http.Request) {
-
-	_, err := requests.NewGetReviewsListRequest(r)
+	request, err := requests.NewGetReviewRequest(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	reviewsQ := helpers.ReviewsQ(r)
-	reviews, err := reviewsQ.Select()
+	reviewQ := helpers.ReviewsQ(r)
+
+	if request.Page <= 0 {
+		request.Page = 1
+	}
+	if request.Limit <= 0 {
+		request.Limit = 10
+	}
+
+	reviews, err := reviewQ.Select(request.SortBy, request.Page, request.Limit)
 	if err != nil {
-		helpers.Log(r).WithError(err).Error("failed to get reviews")
-		ape.Render(w, problems.InternalError())
+		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
 	response := resources.ReviewListResponse{
-		Data: newReviewsList(reviews),
+		Data: reviews,
 	}
-
 	ape.Render(w, response)
-
-}
-
-func newReviewsList(reviews []data.Review) []data.Review {
-	result := make([]data.Review, len(reviews))
-	for i, review := range reviews {
-		result[i] = data.Review{
-			ID:        review.ID,
-			ProductID: review.ProductID,
-			UserID:    review.UserID,
-			Content:   review.Content,
-			Rating:    review.Rating,
-		}
-	}
-	return result
 }
