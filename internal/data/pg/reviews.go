@@ -22,6 +22,10 @@ type reviewQImpl struct {
 	sql sq.SelectBuilder
 }
 
+func (q *reviewQImpl) New() data.ReviewQ {
+	return NewReviewsQ(q.db)
+}
+
 func (q *reviewQImpl) Update(reviewID int64, updateData map[string]interface{}) (data.Review, error) {
 	if len(updateData) == 0 {
 		return data.Review{}, errors.New("no data to update")
@@ -38,10 +42,6 @@ func (q *reviewQImpl) Update(reviewID int64, updateData map[string]interface{}) 
 		return data.Review{}, err
 	}
 	return updatedReview, nil
-}
-
-func (q *reviewQImpl) New() data.ReviewQ {
-	return NewReviewsQ(q.db)
 }
 
 func (q *reviewQImpl) Get(reviewID int64) (*data.Review, error) {
@@ -75,7 +75,9 @@ func (q *reviewQImpl) DeleteAllByProductId(reviewId int64) error {
 	return err
 }
 
-func (q *reviewQImpl) Select(sortBy string, page, limit int) ([]data.Review, error) {
+func (q *reviewQImpl) Select(sortBy string, page, limit int, includeRatings bool) ([]data.ReviewWithRatings, error) {
+	var reviewsWithRatings []data.ReviewWithRatings
+
 	offset := (page - 1) * limit
 	query := q.sql.Limit(uint64(limit)).Offset(uint64(offset))
 	switch sortBy {
@@ -100,7 +102,22 @@ func (q *reviewQImpl) Select(sortBy string, page, limit int) ([]data.Review, err
 	if err != nil {
 		return nil, err
 	}
-	return reviews, err
+
+	// Getting ratings for reviews
+	for _, review := range reviews {
+		reviewWithRatings := data.ReviewWithRatings{Review: review}
+		if includeRatings {
+			ratingsQuery := sq.Select("*").From("review_ratings").Where(sq.Eq{"review_id": review.ID})
+			var ratings []data.Rating
+			err := q.db.Select(&ratings, ratingsQuery)
+			if err != nil {
+				return nil, err
+			}
+			reviewWithRatings.Ratings = ratings
+		}
+		reviewsWithRatings = append(reviewsWithRatings, reviewWithRatings)
+	}
+	return reviewsWithRatings, nil
 }
 
 func (q *reviewQImpl) Transaction(fn func(q data.ReviewQ) error) error {

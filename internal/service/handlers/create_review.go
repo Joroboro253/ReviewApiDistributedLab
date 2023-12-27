@@ -14,8 +14,6 @@ import (
 const createReview = "createReview"
 
 func CreateReview(w http.ResponseWriter, r *http.Request) {
-	log.Print("CreateReview")
-
 	request, err := requests.NewCreateReviewRequest(r)
 	if err != nil {
 		log.Print("Wrong request")

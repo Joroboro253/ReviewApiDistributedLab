@@ -21,5 +21,5 @@ type SuccessResponse struct {
 }
 
 type ReviewListResponse struct {
-	Data []data.Review `json:"data"`
+	Data []data.ReviewWithRatings `json:"data"`
 }

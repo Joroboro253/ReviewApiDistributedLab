@@ -10,10 +10,11 @@ import (
 )
 
 type GetReviewRequest struct {
-	ReviewID int64  `url:"-"`
-	SortBy   string `url:"sort"`
-	Page     int    `url:"page"`
-	Limit    int    `url:"limit"`
+	ReviewID       int64  `url:"-"`
+	SortBy         string `url:"sort"`
+	Page           int    `url:"page"`
+	Limit          int    `url:"limit"`
+	IncludeRatings bool   `url:"include_ratings"`
 }
 
 func NewGetReviewRequest(r *http.Request) (GetReviewRequest, error) {
@@ -26,5 +27,12 @@ func NewGetReviewRequest(r *http.Request) (GetReviewRequest, error) {
 
 	request.ReviewID = cast.ToInt64(chi.URLParam(r, "id"))
 
+	// Default values for pagination
+	if request.Page <= 0 {
+		request.Page = 1
+	}
+	if request.Limit <= 0 {
+		request.Limit = 10
+	}
 	return request, nil
 }
