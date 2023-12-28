@@ -4,9 +4,9 @@ import (
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"net/http"
+	"review_api/internal/data"
 	"review_api/internal/service/helpers"
 	"review_api/internal/service/requests"
-	"review_api/resources"
 )
 
 func GetReviews(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +23,9 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := resources.ReviewListResponse{
+	response := struct {
+		Data []data.ReviewWithRatings `json:"data"`
+	}{
 		Data: reviews,
 	}
 	ape.Render(w, response)

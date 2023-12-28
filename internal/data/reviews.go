@@ -19,9 +19,9 @@ type ReviewQ interface {
 }
 
 type Review struct {
-	ID        int       `json:"id" db:"id"`
-	ProductID int       `json:"product_id" db:"product_id"`
-	UserID    int       `json:"user_id" db:"user_id"`
+	ID        int64     `json:"id" db:"id"`
+	ProductID int64     `json:"product_id" db:"product_id"`
+	UserID    int64     `json:"user_id" db:"user_id"`
 	Content   string    `json:"content" db:"content"`
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
@@ -32,6 +32,10 @@ type ReviewResponse struct {
 }
 
 type ReviewWithRatings struct {
-	Review  Review
-	Ratings []Rating
+	Type         string `json:"type"`
+	ID           int64  `json:"id"`
+	Attributes   Review `json:"attributes"`
+	Relationship struct {
+		Ratings []Rating `json:"ratings"`
+	} `json:"relationships"`
 }

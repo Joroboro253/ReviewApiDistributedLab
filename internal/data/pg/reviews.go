@@ -104,7 +104,11 @@ func (q *reviewQImpl) Select(sortBy string, page, limit int, includeRatings bool
 	}
 
 	for _, review := range reviews {
-		reviewWithRatings := data.ReviewWithRatings{Review: review}
+		reviewWithRatings := data.ReviewWithRatings{
+			Type:       "review",
+			ID:         review.ID,
+			Attributes: review,
+		}
 		if includeRatings {
 			ratingsQuery := sq.Select("*").From("review_ratings").Where(sq.Eq{"review_id": review.ID})
 			var ratings []data.Rating
@@ -112,7 +116,7 @@ func (q *reviewQImpl) Select(sortBy string, page, limit int, includeRatings bool
 			if err != nil {
 				return nil, err
 			}
-			reviewWithRatings.Ratings = ratings
+			reviewWithRatings.Relationship.Ratings = ratings
 		}
 		reviewsWithRatings = append(reviewsWithRatings, reviewWithRatings)
 	}
