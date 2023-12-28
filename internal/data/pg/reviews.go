@@ -103,7 +103,6 @@ func (q *reviewQImpl) Select(sortBy string, page, limit int, includeRatings bool
 		return nil, err
 	}
 
-	// Getting ratings for reviews
 	for _, review := range reviews {
 		reviewWithRatings := data.ReviewWithRatings{Review: review}
 		if includeRatings {
@@ -117,6 +116,7 @@ func (q *reviewQImpl) Select(sortBy string, page, limit int, includeRatings bool
 		}
 		reviewsWithRatings = append(reviewsWithRatings, reviewWithRatings)
 	}
+
 	return reviewsWithRatings, nil
 }
 

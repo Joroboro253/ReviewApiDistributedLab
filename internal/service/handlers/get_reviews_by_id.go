@@ -17,14 +17,6 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 	}
 
 	reviewQ := helpers.ReviewsQ(r)
-
-	if request.Page <= 0 {
-		request.Page = 1
-	}
-	if request.Limit <= 0 {
-		request.Limit = 10
-	}
-
 	reviews, err := reviewQ.Select(request.SortBy, request.Page, request.Limit, request.IncludeRatings)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())

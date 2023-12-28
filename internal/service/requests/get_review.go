@@ -27,12 +27,5 @@ func NewGetReviewRequest(r *http.Request) (GetReviewRequest, error) {
 
 	request.ReviewID = cast.ToInt64(chi.URLParam(r, "id"))
 
-	// Default values for pagination
-	if request.Page <= 0 {
-		request.Page = 1
-	}
-	if request.Limit <= 0 {
-		request.Limit = 10
-	}
 	return request, nil
 }
