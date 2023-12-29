@@ -17,5 +17,8 @@ CREATE TABLE review_ratings (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (review_id) REFERENCES reviews(id)
-)
+);
 -- +migrate Down
+
+DROP TABLE IF EXISTS review_ratings;
+DROP TABLE IF EXISTS reviews;
