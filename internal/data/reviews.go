@@ -1,8 +1,6 @@
 package data
 
-import (
-	"time"
-)
+import "time"
 
 type ReviewQ interface {
 	New() ReviewQ
