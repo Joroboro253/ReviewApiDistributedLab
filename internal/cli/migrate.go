@@ -7,7 +7,6 @@ import (
 	"review_api/internal/config"
 )
 
-// Run Do not change smth
 var migrations = &migrate.EmbedFileSystemMigrationSource{
 	FileSystem: assets.Migrations,
 	Root:       "migrations",

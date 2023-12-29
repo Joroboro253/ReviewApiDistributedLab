@@ -11,7 +11,6 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-// It was changed
 type service struct {
 	log      *logan.Entry
 	copus    types.Copus

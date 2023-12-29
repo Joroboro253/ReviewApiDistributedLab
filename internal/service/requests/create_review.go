@@ -12,7 +12,6 @@ type CreateReviewRequest struct {
 	Data data.Review `json:"data"`
 }
 
-// Здесь происходит сам запрос. Нужно проверить на роботоспособность
 func NewCreateReviewRequest(r *http.Request) (CreateReviewRequest, error) {
 	var request CreateReviewRequest
 	log.Printf("NewCreateReviewRequests")
