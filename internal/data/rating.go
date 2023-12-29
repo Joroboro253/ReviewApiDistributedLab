@@ -8,6 +8,7 @@ type RatingQ interface {
 	UpdateRating(ratingID int64, updateData map[string]interface{}) (Rating, error)
 	DeleteRating(ratingID int64) error
 	Transaction(fn func(q RatingQ) error) error
+	DeleteRatingsByProductID(productID int64) error
 }
 
 type Rating struct {

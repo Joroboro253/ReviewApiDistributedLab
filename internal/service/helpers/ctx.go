@@ -3,7 +3,6 @@ package helpers
 import (
 	"context"
 	"gitlab.com/distributed_lab/logan/v3"
-	"log"
 	"net/http"
 	"review_api/internal/data"
 )
@@ -48,6 +47,5 @@ func RatingsQ(r *http.Request) data.RatingQ {
 			return rq.New()
 		}
 	}
-	log.Printf("Error with ratingQ")
 	return nil
 }
