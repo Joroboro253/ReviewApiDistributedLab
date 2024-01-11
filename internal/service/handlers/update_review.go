@@ -1,24 +1,18 @@
 package handlers
 
 import (
-	"github.com/go-chi/chi"
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
-	"net/http"
+
 	"review_api/internal/data"
 	"review_api/internal/service/helpers"
 	"review_api/internal/service/requests"
-	"strconv"
+	"review_api/resources"
 )
 
 func UpdateReview(w http.ResponseWriter, r *http.Request) {
-	reviewIDStr := chi.URLParam(r, "review_id")
-	reviewID, err := strconv.ParseInt(reviewIDStr, 10, 64)
-	if err != nil {
-		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
 	request, err := requests.NewUpdateReviewRequest(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
@@ -26,18 +20,19 @@ func UpdateReview(w http.ResponseWriter, r *http.Request) {
 	}
 
 	reviewQ := helpers.ReviewsQ(r)
-	updateData := make(map[string]interface{})
-	if request.Data.ProductID != 0 {
-		updateData["product_id"] = request.Data.ProductID
+	var updateData resources.UpdateReviewData
+
+	if request.Data.ProductID != nil {
+		updateData.ProductId = request.Data.ProductID
 	}
-	if request.Data.UserID != 0 {
-		updateData["user_id"] = request.Data.UserID
+	if request.Data.UserID != nil {
+		updateData.UserId = request.Data.UserID
 	}
-	if request.Data.Content != "" {
-		updateData["content"] = request.Data.Content
+	if request.Data.Content != nil {
+		updateData.Content = request.Data.Content
 	}
 
-	updatedReview, err := reviewQ.Update(reviewID, updateData)
+	updatedReview, err := reviewQ.UpdateReview(request.ReviewID, updateData)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return

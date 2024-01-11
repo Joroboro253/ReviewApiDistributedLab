@@ -1,24 +1,18 @@
 package handlers
 
 import (
-	"github.com/go-chi/chi"
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
-	"net/http"
+
 	"review_api/internal/data"
 	"review_api/internal/service/helpers"
 	"review_api/internal/service/requests"
-	"strconv"
+	"review_api/resources"
 )
 
 func UpdateRating(w http.ResponseWriter, r *http.Request) {
-	ratingIDStr := chi.URLParam(r, "rating_id")
-	ratingID, err := strconv.ParseInt(ratingIDStr, 10, 64)
-	if err != nil {
-		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
 	request, err := requests.NewUpdateRatingRequest(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
@@ -26,18 +20,19 @@ func UpdateRating(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ratingQ := helpers.RatingsQ(r)
-	updateData := make(map[string]interface{})
-	if request.Data.ReviewID != 0 {
-		updateData["review_id"] = request.Data.ReviewID
+	var updateData resources.UpdateRatingData
+
+	if request.Data.ReviewID != nil {
+		updateData.ReviewId = request.Data.ReviewID
 	}
-	if request.Data.UserID != 0 {
-		updateData["user_id"] = request.Data.UserID
+	if request.Data.UserID != nil {
+		updateData.UserId = request.Data.UserID
 	}
-	if request.Data.Rating != 0 {
-		updateData["rating"] = request.Data.Rating
+	if request.Data.Rating != nil {
+		updateData.Rating = request.Data.Rating
 	}
 
-	updatedRating, err := ratingQ.UpdateRating(ratingID, updateData)
+	updatedRating, err := ratingQ.UpdateRating(request.RatingID, updateData)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return

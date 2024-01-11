@@ -1,0 +1,57 @@
+patch:
+  tags:
+    - Rating
+  summary: Update a specific rating
+  operationId: updateRating
+  responses:
+    '200':
+      description: Rating updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RatingResponse'
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'
+    '404':
+      description: Rating not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'
+
+delete:
+  tags:
+    - Rating
+  summary: Delete a specific rating
+  operationId: deleteRating
+  responses:
+    '200':
+      description: Rating deleted successfully
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'
+    '404':
+      description: Rating not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'

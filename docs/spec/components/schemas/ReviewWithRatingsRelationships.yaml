@@ -1,0 +1,6 @@
+type: object
+properties:
+  ratings:
+    type: array
+    items:
+      $ref: '#/definitions/Rating'

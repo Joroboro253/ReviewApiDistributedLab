@@ -3,7 +3,7 @@ log:
   disable_sentry: true
 
 db:
-  url: postgres://postgres:bestuser@localhost:5432/reviewApiStruct?sslmode=disable
+  url: postgres://postgres:bestuser@localhost:5432/reviewApi?sslmode=disable
 
 listener:
   addr: :8000

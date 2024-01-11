@@ -3,9 +3,10 @@ package requests
 import (
 	"bytes"
 	"encoding/json"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"io/ioutil"
 	"net/http"
+
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 type CreateRatingRequest struct {

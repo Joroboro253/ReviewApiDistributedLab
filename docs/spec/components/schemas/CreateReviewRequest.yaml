@@ -1,0 +1,14 @@
+type: object
+properties:
+  product_id:
+    type: integer
+    format: int64
+  user_id:
+    type: integer
+    format: int64
+  content:
+    type: string
+required:
+  - product_id
+  - user_id
+  - content

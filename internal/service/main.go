@@ -1,9 +1,11 @@
 package service
 
 import (
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"net"
 	"net/http"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
+
 	"review_api/internal/config"
 
 	"gitlab.com/distributed_lab/kit/copus/types"

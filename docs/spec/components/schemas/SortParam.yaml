@@ -1,0 +1,14 @@
+type: object
+properties:
+  sortBy:
+    type: string
+  page:
+    type: integer
+    format: int64
+  limit:
+    type: integer
+    format: int64
+required:
+  - sortBy
+  - page
+  - limit

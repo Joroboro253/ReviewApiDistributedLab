@@ -2,8 +2,10 @@ package helpers
 
 import (
 	"context"
-	"gitlab.com/distributed_lab/logan/v3"
 	"net/http"
+
+	"gitlab.com/distributed_lab/logan/v3"
+
 	"review_api/internal/data"
 )
 
@@ -42,10 +44,5 @@ func CtxRatingsQ(entry data.RatingQ) func(ctx context.Context) context.Context {
 }
 
 func RatingsQ(r *http.Request) data.RatingQ {
-	if val := r.Context().Value(ratingsQCtxKey); val != nil {
-		if rq, ok := val.(data.RatingQ); ok {
-			return rq.New()
-		}
-	}
-	return nil
+	return r.Context().Value(ratingsQCtxKey).(data.RatingQ).New()
 }

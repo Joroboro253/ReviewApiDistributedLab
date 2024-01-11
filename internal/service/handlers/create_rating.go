@@ -3,6 +3,9 @@ package handlers
 import (
 	"net/http"
 
+	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/ape/problems"
+
 	"review_api/internal/data"
 	"review_api/internal/service/helpers"
 	"review_api/internal/service/requests"
@@ -11,26 +14,18 @@ import (
 func CreateRating(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewCreateRatingRequest(r)
 	if err != nil {
-		helpers.Log(r).WithError(err).Info("Wrong request")
-		w.WriteHeader(http.StatusBadRequest)
+		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	ratingQ := helpers.RatingsQ(r)
-	if ratingQ == nil {
-		helpers.Log(r).Error("RatingQ is not available in the request context")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	_, err = ratingQ.Insert(data.Rating{
+	err = helpers.RatingsQ(r).Insert(data.Rating{
 		ReviewID: request.Data.ReviewID,
 		UserID:   request.Data.UserID,
 		Rating:   request.Data.Rating,
 	})
 	if err != nil {
 		helpers.Log(r).WithError(err).Error("Failed to create rating")
-		w.WriteHeader(http.StatusInternalServerError)
+		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 

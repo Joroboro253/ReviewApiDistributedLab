@@ -1,0 +1,21 @@
+type: object
+properties:
+  review_id:
+    type: integer
+    format: int64
+  sort_by:
+    type: string
+  page:
+    type: integer
+    format: int64
+  limit:
+    type: integer
+    format: int64
+  include_ratings:
+    type: boolean
+required:
+  - review_id
+  - sort_by
+  - page
+  - limit
+  - include_ratings

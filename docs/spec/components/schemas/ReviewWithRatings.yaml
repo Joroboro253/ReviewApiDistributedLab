@@ -1,0 +1,24 @@
+type: object
+properties:
+    attributes:
+      type: object
+      $ref: '#/definitions/Review'
+    id:
+      type: integer
+      format: int32
+    productID:
+      type: integer
+      format: int32
+    relationships:
+      type: object
+      $ref: '#/definitions/ReviewWithRatingsRelationships'
+    type:
+      type: string
+
+ReviewWithRatingsRelationships:
+  type: object
+  properties:
+    ratings:
+      type: array
+      items:
+        $ref: '#/definitions/Rating'

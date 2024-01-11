@@ -12,8 +12,8 @@ import (
 type GetReviewRequest struct {
 	ReviewID       int64  `url:"-"`
 	SortBy         string `url:"sort"`
-	Page           int    `url:"page"`
-	Limit          int    `url:"limit"`
+	Page           int64  `url:"page"`
+	Limit          int64  `url:"limit"`
 	IncludeRatings bool   `url:"include_ratings"`
 }
 

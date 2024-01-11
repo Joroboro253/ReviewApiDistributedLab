@@ -1,0 +1,12 @@
+type: object
+properties:
+  status:
+    type: int
+  title:
+    type: string
+  detail:
+    type: string
+required:
+  - status
+  - title
+  - detail

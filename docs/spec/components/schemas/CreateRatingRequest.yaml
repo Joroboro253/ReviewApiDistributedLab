@@ -1,0 +1,16 @@
+type: object
+properties:
+  review_id:
+    type: integer
+    format: int64
+  user_id:
+    type: integer
+    format: int64
+  rating:
+    type: number
+    format: float64
+required:
+  - review_id
+  - user_id
+  - rating
+

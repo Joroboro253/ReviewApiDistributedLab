@@ -1,13 +1,16 @@
 package data
 
-import "time"
+import (
+	"time"
+
+	"review_api/resources"
+)
 
 type RatingQ interface {
 	New() RatingQ
-	Insert(rating Rating) (Rating, error)
-	UpdateRating(ratingID int64, updateData map[string]interface{}) (Rating, error)
+	Insert(rating Rating) error
+	UpdateRating(ratingID int64, updateData resources.UpdateRatingData) (Rating, error)
 	DeleteRating(ratingID int64) error
-	Transaction(fn func(q RatingQ) error) error
 	DeleteRatingsByProductID(productID int64) error
 }
 

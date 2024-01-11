@@ -1,10 +1,11 @@
 package requests
 
 import (
+	"net/http"
+
 	"github.com/go-chi/chi"
 	"github.com/spf13/cast"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 type DeleteReviewRequestByRevID struct {

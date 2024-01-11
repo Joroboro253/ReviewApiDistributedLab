@@ -4,6 +4,7 @@ import (
 	"github.com/alecthomas/kingpin"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3"
+
 	"review_api/internal/config"
 	"review_api/internal/service"
 )

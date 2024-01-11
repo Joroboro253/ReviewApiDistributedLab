@@ -3,6 +3,7 @@ package cli
 import (
 	migrate "github.com/rubenv/sql-migrate"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+
 	"review_api/internal/assets"
 	"review_api/internal/config"
 )

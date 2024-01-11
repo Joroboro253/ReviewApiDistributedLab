@@ -1,0 +1,30 @@
+patch:
+  tags:
+    - Review
+  summary: Update a specific review
+  operationId: updateReview
+  responses:
+    '200':
+      description: Review updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReviewResponse'
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'
+    '404':
+      description: Review not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'
