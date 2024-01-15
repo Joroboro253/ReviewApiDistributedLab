@@ -1,6 +1,7 @@
 package data
 
 import (
+	"net/http"
 	"time"
 
 	"review_api/resources"
@@ -12,7 +13,7 @@ type ReviewQ interface {
 	Get(reviewID int64) (*Review, error)
 	DeleteAllByProductId(reviewId int64) error
 	DeleteByReviewId(reviewId int64) error
-	Select(sortParam resources.SortParam, includeRatings bool) ([]ReviewWithRatings, error)
+	Select(r *http.Request, sortParam resources.SortParam, includeRatings bool) ([]ReviewWithRatings, error)
 	UpdateReview(reviewID int64, updateData resources.UpdateReviewData) (Review, error)
 	Insert(data Review) error
 }
@@ -39,14 +40,3 @@ type ReviewWithRatings struct {
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 	Rating    float64   `json:"rating" db:"rating"`
 }
-
-//type ReviewWithRatings struct {
-//	Type         string `json:"type"`
-//	ID           int64  `json:"id"`
-//	ProductID    int64  `json:"product_id" db:"product_id"`
-//	UserID       int64  `json:"user_id" db:"user_id"` // Добавленное поле
-//	Attributes   Review `json:"attributes"`
-//	Relationship struct {
-//		Ratings []Rating `json:"ratings"`
-//	} `json:"relationships"`
-//}

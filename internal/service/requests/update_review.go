@@ -2,6 +2,7 @@ package requests
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -9,14 +10,19 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
+type Attributes struct {
+	ProductID *int64  `json:"product_id"`
+	UserID    *int64  `json:"user_id"`
+	Content   *string `json:"content"`
+}
+
+type UpdateReviewData struct {
+	Attributes Attributes `json:"attributes"`
+}
+
 type UpdateReviewRequest struct {
-	Data struct {
-		ProductID *int64   `json:"product_id"`
-		UserID    *int64   `json:"user_id"`
-		Content   *string  `json:"content"`
-		Rating    *float64 `json:"rating"`
-	} `json:"data"`
-	ReviewID int64 `json:"-"`
+	Data     UpdateReviewData `json:"data"`
+	ReviewID int64
 }
 
 func NewUpdateReviewRequest(r *http.Request) (UpdateReviewRequest, error) {
@@ -33,5 +39,6 @@ func NewUpdateReviewRequest(r *http.Request) (UpdateReviewRequest, error) {
 
 	request.ReviewID = reviewID
 
+	log.Printf("Decoded update review request: %+v", request)
 	return request, nil
 }

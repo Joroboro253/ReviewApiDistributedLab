@@ -2,10 +2,14 @@ package pg
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 	"strings"
 
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/logan/v3"
 
+	"review_api/internal/service/helpers"
 	"review_api/resources"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -36,7 +40,7 @@ func (q *reviewQImpl) Insert(review data.Review) error {
 	stmt := sq.Insert(reviewsTableName).
 		Columns("product_id", "user_id", "content", "created_at", "updated_at").
 		Values(review.ProductID, review.UserID, review.Content, sq.Expr("CURRENT_TIMESTAMP"), sq.Expr("CURRENT_TIMESTAMP")).
-		Suffix("RETURNING id, product_id, user_id, content, created_at, updated_at")
+		Suffix("RETURNING id, product_id, user_id, content, created_at, updated_at") // ?
 
 	var result data.Review
 	err := q.db.Get(&result, stmt)
@@ -49,19 +53,59 @@ func (q *reviewQImpl) Insert(review data.Review) error {
 func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateReviewData) (data.Review, error) {
 	builder := sq.Update(reviewsTableName).Where(sq.Eq{"id": reviewID})
 
+	// Проверка, есть ли данные для обновления
+	updateFields := false
 	if updateData.ProductId != nil {
 		builder = builder.Set("product_id", *updateData.ProductId)
+		updateFields = true
 	}
 	if updateData.UserId != nil {
 		builder = builder.Set("user_id", *updateData.UserId)
+		updateFields = true
 	}
 	if updateData.Content != nil {
 		builder = builder.Set("content", *updateData.Content)
+		updateFields = true
 	}
 
+	if !updateFields {
+		log.Println("No fields to update")
+		return data.Review{}, errors.New("no fields to update")
+	}
+
+	query, args, err := builder.ToSql()
+	if err != nil {
+		log.Printf("Error building SQL query: %v", err)
+		return data.Review{}, err
+	}
+
+	// Выполнение запроса UPDATE и получение результата
+	res, err := q.db.ExecWithResult(sq.Expr(query, args...))
+	if err != nil {
+		log.Printf("Error executing SQL query: %v", err)
+		return data.Review{}, err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		log.Printf("Error getting rows affected: %v", err)
+		return data.Review{}, err
+	}
+
+	if rowsAffected == 0 {
+		log.Println("No rows updated")
+		return data.Review{}, errors.New("no rows updated")
+	}
+
+	// Получение обновленной записи
 	var updatedReview data.Review
-	err := q.db.Get(&updatedReview, builder)
-	return updatedReview, err
+	err = q.db.Get(&updatedReview, sq.Select("*").From(reviewsTableName).Where(sq.Eq{"id": reviewID}))
+	if err != nil {
+		log.Printf("Error fetching updated review: %v", err)
+		return data.Review{}, err
+	}
+
+	return updatedReview, nil
 }
 
 func (q *reviewQImpl) Get(reviewID int64) (*data.Review, error) {
@@ -84,22 +128,38 @@ func (q *reviewQImpl) DeleteAllByProductId(reviewId int64) error {
 	return q.db.Exec(stmt)
 }
 
-func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool) ([]data.ReviewWithRatings, error) {
+func (q *reviewQImpl) Select(r *http.Request, sortParam resources.SortParam, includeRatings bool) ([]data.ReviewWithRatings, error) {
 	var reviewsWithRatings []data.ReviewWithRatings
 
 	sortFields := map[string]string{
 		"date":   "reviews.created_at",
-		"rating": "ratings.rating",
+		"rating": "avg_rating",
 	}
 
-	var orderBy string
-	offset := (sortParam.Page - 1) * sortParam.Limit
-	baseQuery := sq.Select("reviews.id", "reviews.product_id", "reviews.user_id", "reviews.content", "reviews.created_at", "reviews.updated_at").From("reviews")
+	selectFields := []string{
+		"reviews.id",
+		"reviews.product_id",
+		"reviews.user_id",
+		"reviews.content",
+		"reviews.created_at",
+		"reviews.updated_at",
+	}
+
+	baseQuery := sq.Select(selectFields...).From("reviews")
 
 	if includeRatings {
-		baseQuery = baseQuery.Column("ratings.rating").LeftJoin("ratings ON reviews.id = ratings.review_id")
+		baseQuery = baseQuery.
+			Column("COALESCE(AVG(review_ratings.rating), 0) AS avg_rating").
+			LeftJoin("review_ratings ON reviews.id = review_ratings.review_id").
+			GroupBy("reviews.id", "reviews.product_id", "reviews.user_id", "reviews.content", "reviews.created_at", "reviews.updated_at")
 	}
 
+	helpers.Log(r).WithFields(logan.F{
+		"sortParam":      sortParam,
+		"includeRatings": includeRatings,
+	}).Info("Executing Select query")
+
+	var orderBy string
 	if strings.HasPrefix(sortParam.SortBy, "-") {
 		sortByField := strings.TrimPrefix(sortParam.SortBy, "-")
 		if field, ok := sortFields[sortByField]; ok {
@@ -114,7 +174,8 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool)
 			orderBy = "reviews.created_at ASC"
 		}
 	}
-	query := baseQuery.OrderBy(orderBy).Limit(uint64(sortParam.Limit)).Offset(uint64(offset))
+
+	query := baseQuery.OrderBy(orderBy).Limit(uint64(sortParam.Limit)).Offset(uint64((sortParam.Page - 1) * sortParam.Limit))
 
 	err := q.db.Select(&reviewsWithRatings, query)
 	if err != nil {

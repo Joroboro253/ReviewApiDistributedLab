@@ -25,6 +25,18 @@ func NewGetReviewRequest(r *http.Request) (GetReviewRequest, error) {
 		return request, err
 	}
 
+	if request.Page == 0 {
+		request.Page = 1
+	}
+
+	if request.Limit == 0 {
+		request.Limit = 10
+	}
+
+	if request.SortBy == "" {
+		request.SortBy = "date"
+	}
+
 	request.ReviewID = cast.ToInt64(chi.URLParam(r, "id"))
 
 	return request, nil
