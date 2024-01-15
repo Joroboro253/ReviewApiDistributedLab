@@ -10,7 +10,6 @@ import (
 type ReviewQ interface {
 	New() ReviewQ
 
-	Get(reviewID int64) (*Review, error)
 	DeleteAllByProductId(reviewId int64) error
 	DeleteByReviewId(reviewId int64) error
 	Select(r *http.Request, sortParam resources.SortParam, includeRatings bool) ([]ReviewWithRatings, error)
@@ -38,5 +37,5 @@ type ReviewWithRatings struct {
 	Content   string    `json:"content" db:"content"`
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
-	Rating    float64   `json:"rating" db:"rating"`
+	AvgRating float64   `json:"rating" db:"avg_rating"`
 }

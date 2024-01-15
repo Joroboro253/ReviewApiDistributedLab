@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -73,16 +72,8 @@ func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateRe
 	}
 
 	query, args, err := builder.ToSql()
-	if err != nil {
-		log.Printf("Error building SQL query: %v", err)
-		return data.Review{}, err
-	}
 
 	res, err := q.db.ExecWithResult(sq.Expr(query, args...))
-	if err != nil {
-		log.Printf("Error executing SQL query: %v", err)
-		return data.Review{}, err
-	}
 
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
@@ -105,28 +96,16 @@ func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateRe
 	return updatedReview, nil
 }
 
-func (q *reviewQImpl) Get(reviewID int64) (*data.Review, error) {
-	var review data.Review
-
-	query := sq.Select("*").
-		From("reviews").
-		Where(sq.Eq{"id": reviewID})
-
-	return &review, q.db.Get(&review, query)
-}
-
-func (q *reviewQImpl) DeleteByReviewId(reviewId int64) error {
-	stmt := sq.Delete(reviewsTableName).Where("id = ?", reviewId)
-	return q.db.Exec(stmt)
-}
-
-func (q *reviewQImpl) DeleteAllByProductId(reviewId int64) error {
-	stmt := sq.Delete(reviewsTableName).Where("product_id = ?", reviewId)
-	return q.db.Exec(stmt)
-}
-
 func (q *reviewQImpl) Select(r *http.Request, sortParam resources.SortParam, includeRatings bool) ([]data.ReviewWithRatings, error) {
 	var reviewsWithRatings []data.ReviewWithRatings
+
+	helpers.Log(r).WithFields(logan.F{
+		"sort_by":         sortParam.SortBy,
+		"sort_dir":        sortParam.SortDirection,
+		"page":            sortParam.Page,
+		"limit":           sortParam.Limit,
+		"include_ratings": includeRatings,
+	}).Info("Executing Select query with parameters")
 
 	sortFields := map[string]string{
 		"date":   "reviews.created_at",
@@ -157,16 +136,15 @@ func (q *reviewQImpl) Select(r *http.Request, sortParam resources.SortParam, inc
 	}).Info("Executing Select query")
 
 	var orderBy string
-	if strings.HasPrefix(sortParam.SortBy, "-") {
-		sortByField := strings.TrimPrefix(sortParam.SortBy, "-")
-		if field, ok := sortFields[sortByField]; ok {
+	if field, ok := sortFields[sortParam.SortBy]; ok {
+		if sortParam.SortDirection == "desc" {
 			orderBy = fmt.Sprintf("%s DESC", field)
 		} else {
-			orderBy = "reviews.created_at DESC"
+			orderBy = fmt.Sprintf("%s ASC", field)
 		}
 	} else {
-		if field, ok := sortFields[sortParam.SortBy]; ok {
-			orderBy = fmt.Sprintf("%s ASC", field)
+		if sortParam.SortDirection == "desc" {
+			orderBy = "reviews.created_at DESC"
 		} else {
 			orderBy = "reviews.created_at ASC"
 		}
@@ -180,4 +158,14 @@ func (q *reviewQImpl) Select(r *http.Request, sortParam resources.SortParam, inc
 	}
 
 	return reviewsWithRatings, nil
+}
+
+func (q *reviewQImpl) DeleteByReviewId(reviewId int64) error {
+	stmt := sq.Delete(reviewsTableName).Where("id = ?", reviewId)
+	return q.db.Exec(stmt)
+}
+
+func (q *reviewQImpl) DeleteAllByProductId(reviewId int64) error {
+	stmt := sq.Delete(reviewsTableName).Where("product_id = ?", reviewId)
+	return q.db.Exec(stmt)
 }
