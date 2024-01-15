@@ -19,9 +19,9 @@ func CreateRating(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = helpers.RatingsQ(r).Insert(data.Rating{
-		ReviewID: request.Data.ReviewID,
-		UserID:   request.Data.UserID,
-		Rating:   request.Data.Rating,
+		ReviewID: request.Data.Attributes.ReviewID,
+		UserID:   request.Data.Attributes.UserID,
+		Rating:   request.Data.Attributes.Rating,
 	})
 	if err != nil {
 		helpers.Log(r).WithError(err).Error("Failed to create rating")

@@ -11,7 +11,7 @@ import (
 
 type UpdateRatingRequest struct {
 	Data struct {
-		ReviewID *int64   `json:"rating_id"`
+		ReviewID *int64   `json:"review_id"`
 		UserID   *int64   `json:"user_id"`
 		Rating   *float64 `json:"rating"`
 	} `json:"data"`

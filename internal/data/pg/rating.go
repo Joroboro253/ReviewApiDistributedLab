@@ -2,6 +2,7 @@ package pg
 
 import (
 	"fmt"
+	"log"
 
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -32,13 +33,15 @@ func (q *ratingQImpl) New() data.RatingQ {
 }
 
 func (q *ratingQImpl) Insert(rating data.Rating) error {
+	log.Printf("Inserting rating: review_id=%d, user_id=%d, rating=%f", rating.ReviewID, rating.UserID, rating.Rating)
+
 	stmt := sq.Insert(ratingsTableName).
 		Columns("review_id", "user_id", "rating").
 		Values(rating.ReviewID, rating.UserID, rating.Rating)
 
-	var newRating data.Rating
-	err := q.db.Get(&newRating, stmt)
+	err := q.db.Exec(stmt)
 	if err != nil {
+		log.Printf("Error inserting rating: %v", err)
 		return errors.Wrap(err, "failed to insert rating")
 	}
 	return nil

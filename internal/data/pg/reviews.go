@@ -97,7 +97,6 @@ func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateRe
 		return data.Review{}, errors.New("no rows updated")
 	}
 
-	// Получение обновленной записи
 	var updatedReview data.Review
 	err = q.db.Get(&updatedReview, sq.Select("*").From(reviewsTableName).Where(sq.Eq{"id": reviewID}))
 	if err != nil {
