@@ -53,7 +53,6 @@ func (q *reviewQImpl) Insert(review data.Review) error {
 func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateReviewData) (data.Review, error) {
 	builder := sq.Update(reviewsTableName).Where(sq.Eq{"id": reviewID})
 
-	// Проверка, есть ли данные для обновления
 	updateFields := false
 	if updateData.ProductId != nil {
 		builder = builder.Set("product_id", *updateData.ProductId)
@@ -79,7 +78,6 @@ func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateRe
 		return data.Review{}, err
 	}
 
-	// Выполнение запроса UPDATE и получение результата
 	res, err := q.db.ExecWithResult(sq.Expr(query, args...))
 	if err != nil {
 		log.Printf("Error executing SQL query: %v", err)

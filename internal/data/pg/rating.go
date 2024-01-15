@@ -7,11 +7,10 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
-	"review_api/resources"
-
 	"gitlab.com/distributed_lab/kit/pgdb"
 
 	"review_api/internal/data"
+	"review_api/resources"
 )
 
 const ratingsTableName = "review_ratings"
@@ -48,21 +47,36 @@ func (q *ratingQImpl) Insert(rating data.Rating) error {
 }
 
 func (q *ratingQImpl) UpdateRating(ratingID int64, updateData resources.UpdateRatingData) (data.Rating, error) {
-	builder := sq.Update(ratingsTableName).Where(sq.Eq{"id": ratingID})
+	log.Printf("Update rating: rating_id=%d, review_id=%v, user_id=%v, rating=%v", ratingID, updateData.ReviewId, updateData.UserId, updateData.Rating)
 
+	// Построение и выполнение запроса на обновление
+	updateBuilder := sq.Update(ratingsTableName).Where(sq.Eq{"id": ratingID})
 	if updateData.ReviewId != nil {
-		builder = builder.Set("review_id", *updateData.ReviewId)
+		updateBuilder = updateBuilder.Set("review_id", *updateData.ReviewId)
 	}
 	if updateData.UserId != nil {
-		builder = builder.Set("user_id", *updateData.UserId)
+		updateBuilder = updateBuilder.Set("user_id", *updateData.UserId)
 	}
 	if updateData.Rating != nil {
-		builder = builder.Set("rating", *updateData.Rating)
+		updateBuilder = updateBuilder.Set("rating", *updateData.Rating)
 	}
 
+	updateSql, args, err := updateBuilder.ToSql()
+	if err != nil {
+		log.Printf("Error building SQL for update rating: %v", err)
+		return data.Rating{}, err
+	}
+	log.Printf("Executing SQL for update rating: %s, with args: %v", updateSql, args)
+
+	err = q.db.ExecRaw(updateSql, args...)
+
+	fetchBuilder := sq.Select("*").From(ratingsTableName).Where(sq.Eq{"id": ratingID})
+	fetchSql, args, err := fetchBuilder.ToSql()
+
 	var updatedRating data.Rating
-	err := q.db.Get(&updatedRating, builder)
-	return updatedRating, err
+	err = q.db.GetRaw(&updatedRating, fetchSql, args...)
+
+	return updatedRating, nil
 }
 
 func (q *ratingQImpl) DeleteRating(ratingID int64) error {

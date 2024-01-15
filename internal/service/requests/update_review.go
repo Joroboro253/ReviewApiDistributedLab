@@ -10,14 +10,14 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-type Attributes struct {
+type RevAttributes struct {
 	ProductID *int64  `json:"product_id"`
 	UserID    *int64  `json:"user_id"`
 	Content   *string `json:"content"`
 }
 
 type UpdateReviewData struct {
-	Attributes Attributes `json:"attributes"`
+	Attributes RevAttributes `json:"attributes"`
 }
 
 type UpdateReviewRequest struct {
