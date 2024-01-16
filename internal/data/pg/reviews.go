@@ -3,12 +3,9 @@ package pg
 import (
 	"fmt"
 	"log"
-	"net/http"
 
 	sq "github.com/Masterminds/squirrel"
-	"gitlab.com/distributed_lab/logan/v3"
 
-	"review_api/internal/service/helpers"
 	"review_api/resources"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -67,7 +64,6 @@ func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateRe
 	}
 
 	if !updateFields {
-		log.Println("No fields to update")
 		return data.Review{}, errors.New("no fields to update")
 	}
 
@@ -82,30 +78,20 @@ func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateRe
 	}
 
 	if rowsAffected == 0 {
-		log.Println("No rows updated")
 		return data.Review{}, errors.New("no rows updated")
 	}
 
 	var updatedReview data.Review
 	err = q.db.Get(&updatedReview, sq.Select("*").From(reviewsTableName).Where(sq.Eq{"id": reviewID}))
 	if err != nil {
-		log.Printf("Error fetching updated review: %v", err)
 		return data.Review{}, err
 	}
 
 	return updatedReview, nil
 }
 
-func (q *reviewQImpl) Select(r *http.Request, sortParam resources.SortParam, includeRatings bool) ([]data.ReviewWithRatings, error) {
+func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool) ([]data.ReviewWithRatings, error) {
 	var reviewsWithRatings []data.ReviewWithRatings
-
-	helpers.Log(r).WithFields(logan.F{
-		"sort_by":         sortParam.SortBy,
-		"sort_dir":        sortParam.SortDirection,
-		"page":            sortParam.Page,
-		"limit":           sortParam.Limit,
-		"include_ratings": includeRatings,
-	}).Info("Executing Select query with parameters")
 
 	sortFields := map[string]string{
 		"date":   "reviews.created_at",
@@ -129,11 +115,6 @@ func (q *reviewQImpl) Select(r *http.Request, sortParam resources.SortParam, inc
 			LeftJoin("review_ratings ON reviews.id = review_ratings.review_id").
 			GroupBy("reviews.id", "reviews.product_id", "reviews.user_id", "reviews.content", "reviews.created_at", "reviews.updated_at")
 	}
-
-	helpers.Log(r).WithFields(logan.F{
-		"sortParam":      sortParam,
-		"includeRatings": includeRatings,
-	}).Info("Executing Select query")
 
 	var orderBy string
 	if field, ok := sortFields[sortParam.SortBy]; ok {
@@ -160,12 +141,8 @@ func (q *reviewQImpl) Select(r *http.Request, sortParam resources.SortParam, inc
 	return reviewsWithRatings, nil
 }
 
-func (q *reviewQImpl) DeleteByReviewId(reviewId int64) error {
-	stmt := sq.Delete(reviewsTableName).Where("id = ?", reviewId)
-	return q.db.Exec(stmt)
-}
-
-func (q *reviewQImpl) DeleteAllByProductId(reviewId int64) error {
-	stmt := sq.Delete(reviewsTableName).Where("product_id = ?", reviewId)
+func (q *reviewQImpl) DeleteAllByProductId(productId int64) error {
+	log.Printf("ID: %d", productId)
+	stmt := sq.Delete(reviewsTableName).Where("product_id = ?", productId)
 	return q.db.Exec(stmt)
 }

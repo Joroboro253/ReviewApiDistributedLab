@@ -17,14 +17,6 @@ func DeleteAllByProductId(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Ratings deleting
-	err = helpers.RatingsQ(r).DeleteRatingsByProductID(request.ProductID)
-	if err != nil {
-		helpers.Log(r).WithError(err).Error("failed to delete ratings associated with product reviews")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
-
 	err = helpers.ReviewsQ(r).DeleteAllByProductId(request.ProductID)
 	if err != nil {
 		helpers.Log(r).WithError(err).Error("failed to delete all reviews by product id from DB")

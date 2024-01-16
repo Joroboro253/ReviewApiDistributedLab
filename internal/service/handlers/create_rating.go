@@ -23,6 +23,7 @@ func CreateRating(w http.ResponseWriter, r *http.Request) {
 		UserID:   request.Data.Attributes.UserID,
 		Rating:   request.Data.Attributes.Rating,
 	})
+
 	if err != nil {
 		helpers.Log(r).WithError(err).Error("Failed to create rating")
 		ape.RenderErr(w, problems.InternalError())
