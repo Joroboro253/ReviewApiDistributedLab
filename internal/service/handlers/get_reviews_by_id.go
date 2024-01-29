@@ -31,7 +31,6 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// todo Здесь необходимо изменить на ресурсы
 	response := struct {
 		Data []data.ReviewWithRatings `json:"data"`
 	}{
