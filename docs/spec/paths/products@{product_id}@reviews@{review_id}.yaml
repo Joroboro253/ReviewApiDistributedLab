@@ -1,30 +1,42 @@
-patch:
+post:
+  summary: Create new rating for a review
+  operationId: createRating
   tags:
-    - Review
-  summary: Update a specific review
-  operationId: updateReview
+    - Rating
+  parameters:
+    - $ref: '#/components/parameters/product_id'
+    - $ref: '#/components/parameters/review_id'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/CreateRatingRequest'
   responses:
-    '200':
-      description: Review updated successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ReviewResponse'
+    '201':
+      description: Rating created successfully
     '400':
       description: Bad request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIError'
-    '404':
-      description: Review not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIError'
     '500':
       description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIError'
+patch:
+  summary: Update review by review id
+  operationId: updateReview
+  tags:
+    - Review
+  parameters:
+    - $ref: '#/components/parameters/product_id'
+    - $ref: '#/components/parameters/review_id'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/UpdateReviewRequest'
+  responses:
+    '201':
+      description: Review updated successfully
+    '400':
+      description: Bad request
+    '500':
+      description: Internal server error

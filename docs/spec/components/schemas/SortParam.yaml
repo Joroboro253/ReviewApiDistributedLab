@@ -1,17 +1,17 @@
 type: object
+required:
+  - limit
+  - page
+  - sortBy
+  - sortDirection
 properties:
-  sortBy:
-    type: string
-  page:
-    type: integer
-    format: int64
   limit:
     type: integer
     format: int64
+  page:
+    type: integer
+    format: int64
+  sortBy:
+    type: string
   sortDirection:
     type: string
-required:
-  - sortBy
-  - page
-  - limit
-  - sortDirection

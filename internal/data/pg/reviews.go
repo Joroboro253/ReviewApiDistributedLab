@@ -50,16 +50,16 @@ func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateRe
 	builder := sq.Update(reviewsTableName).Where(sq.Eq{"id": reviewID})
 
 	updateFields := false
-	if updateData.ProductId != nil {
-		builder = builder.Set("product_id", *updateData.ProductId)
+	if updateData.Attributes.ProductId != 0 {
+		builder = builder.Set("product_id", updateData.Attributes.ProductId)
 		updateFields = true
 	}
-	if updateData.UserId != nil {
-		builder = builder.Set("user_id", *updateData.UserId)
+	if updateData.Attributes.UserId != 0 {
+		builder = builder.Set("user_id", updateData.Attributes.UserId)
 		updateFields = true
 	}
-	if updateData.Content != nil {
-		builder = builder.Set("content", *updateData.Content)
+	if updateData.Attributes.Content != "" {
+		builder = builder.Set("content", updateData.Attributes.Content)
 		updateFields = true
 	}
 

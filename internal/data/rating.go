@@ -20,7 +20,3 @@ type Rating struct {
 	CreatedAt time.Time `db:"created_at"`
 	UpdateAt  time.Time `db:"updated_at"`
 }
-
-type RatingResponse struct {
-	Data Rating `json:"data"`
-}

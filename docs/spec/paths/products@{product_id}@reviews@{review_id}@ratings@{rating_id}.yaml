@@ -1,0 +1,22 @@
+patch:
+  summary: Update rating by rating id
+  operationId: updateRating
+  tags:
+    - Rating
+  parameters:
+    - $ref: '#/components/parameters/product_id'
+    - $ref: '#/components/parameters/review_id'
+    - $ref: '#/components/parameters/rating_id'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/UpdateRatingRequest'
+  responses:
+    '201':
+      description: Rating updated successfully
+    '400':
+      description: Bad request
+    '500':
+      description: Internal server error

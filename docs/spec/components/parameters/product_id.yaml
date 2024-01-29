@@ -1,0 +1,7 @@
+in: query
+name: 'product_id'
+required: true
+schema:
+  type: integer
+  format: int64
+description: "Product identifier"

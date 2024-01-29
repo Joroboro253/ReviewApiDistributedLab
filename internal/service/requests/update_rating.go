@@ -8,25 +8,12 @@ import (
 
 	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+
+	"review_api/resources"
 )
 
-type RateAttributes struct {
-	ReviewID *int64   `json:"review_id"`
-	UserID   *int64   `json:"user_id"`
-	Rating   *float64 `json:"rating"`
-}
-
-type UpdateRatingData struct {
-	Attributes RateAttributes `json:"attributes"`
-}
-
-type UpdateRatingRequest struct {
-	Data     UpdateRatingData `json:"data"`
-	RatingID int64
-}
-
-func NewUpdateRatingRequest(r *http.Request) (UpdateRatingRequest, error) {
-	var request UpdateRatingRequest
+func NewUpdateRatingRequest(r *http.Request) (resources.UpdateRatingRequest, error) {
+	var request resources.UpdateRatingRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return request, errors.Wrap(err, "failed to unmarshal update rating request")
 	}
@@ -37,7 +24,7 @@ func NewUpdateRatingRequest(r *http.Request) (UpdateRatingRequest, error) {
 		return request, err
 	}
 
-	request.RatingID = ratingID
+	request.RatingId = ratingID
 
 	log.Printf("Decoded update rating request: %+v", request)
 	return request, nil

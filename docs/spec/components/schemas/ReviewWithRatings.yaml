@@ -1,24 +1,30 @@
 type: object
+required:
+  - id
+  - product_id
+  - user_id
+  - content
+  - created_at
+  - updated_at
+  - avg_rating
 properties:
-    attributes:
-      type: object
-      $ref: '#/definitions/Review'
     id:
       type: integer
-      format: int32
-    productID:
+      format: int64
+    product_id:
       type: integer
-      format: int32
-    relationships:
-      type: object
-      $ref: '#/definitions/ReviewWithRatingsRelationships'
-    type:
+      format: int64
+    user_id:
+      type: integer
+      format: int64
+    content:
       type: string
-
-ReviewWithRatingsRelationships:
-  type: object
-  properties:
-    ratings:
-      type: array
-      items:
-        $ref: '#/definitions/Rating'
+    created_at:
+      type: string
+      format: time.Time
+    updated_at:
+      type: string
+      format: time.Time
+    avg_rating:
+      type: number
+      format: float64

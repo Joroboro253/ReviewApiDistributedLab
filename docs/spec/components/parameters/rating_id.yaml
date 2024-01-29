@@ -1,0 +1,7 @@
+in: query
+name: 'rating_id'
+required: true
+schema:
+  type: integer
+  format: int64
+description: "Rating identifier"

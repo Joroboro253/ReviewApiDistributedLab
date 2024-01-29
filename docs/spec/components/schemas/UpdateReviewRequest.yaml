@@ -1,18 +1,10 @@
 type: object
-properties:
-  product_id:
-    type: integer
-    format: int64
-  user_id:
-    type: integer
-    format: int64
-  content:
-    type: string
-  rating:
-    type: number
-    format: float64
 required:
-  - product_id
-  - user_id
-  - content
-  - rating
+  - data
+  - reviewId
+properties:
+  data:
+    $ref: '#/components/schemas/UpdateReviewData'
+  reviewId:
+    type: integer
+    format: int64

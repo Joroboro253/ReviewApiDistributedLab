@@ -1,0 +1,7 @@
+in: query
+name: 'review_id'
+required: true
+schema:
+  type: integer
+  format: int64
+description: "Review identifier"

@@ -1,13 +1,6 @@
 type: object
+required:
+  - attributes
 properties:
-  product_id:
-    type: integer
-    format: int64
-    nullable: true
-  user_id:
-    type: integer
-    format: int64
-    nullable: true
-  content:
-    type: string
-    nullable: true
+  attributes:
+    $ref: '#/components/schemas/RevAttributes'

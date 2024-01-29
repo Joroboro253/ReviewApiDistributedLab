@@ -1,7 +1,0 @@
-parameters:
-  - name: rating_id
-    in: path
-    required: true
-    schema:
-      type: integer
-      format: int64

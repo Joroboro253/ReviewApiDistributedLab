@@ -1,0 +1,21 @@
+type: object
+required:
+  - status
+  - title
+  - detail
+properties:
+  id:
+    type: string
+    description: Unique error identifier
+  status:
+    type: string
+    description: String representation of HTTP error status
+  code:
+    type: string
+    description: Internal error code
+  title:
+    type: string
+    description: Brief description of the error
+  detail:
+    type: string
+    description: Detailed description of the error

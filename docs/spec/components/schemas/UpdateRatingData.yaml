@@ -1,14 +1,6 @@
 type: object
+required:
+  - attributes
 properties:
-  review_id:
-    type: integer
-    format: int64
-    nullable: true
-  user_id:
-    type: integer
-    format: int64
-    nullable: true
-  rating:
-    type: number
-    format: float64
-    nullable: true
+  attributes:
+    $ref: '#/components/schemas/RatingAttributes'
