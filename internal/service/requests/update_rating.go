@@ -19,12 +19,12 @@ func NewUpdateRatingRequest(r *http.Request) (resources.UpdateRatingRequest, err
 	}
 
 	ratingIDStr := chi.URLParam(r, "rating_id")
-	ratingID, err := strconv.ParseInt(ratingIDStr, 10, 64)
+	ratingId, err := strconv.ParseInt(ratingIDStr, 10, 64)
 	if err != nil {
 		return request, err
 	}
 
-	request.RatingId = ratingID
+	request.Data.RatingId = ratingId
 
 	log.Printf("Decoded update rating request: %+v", request)
 	return request, nil

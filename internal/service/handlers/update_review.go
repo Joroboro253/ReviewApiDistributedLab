@@ -31,7 +31,7 @@ func UpdateReview(w http.ResponseWriter, r *http.Request) {
 		updateData.Attributes.Content = request.Data.Attributes.Content
 	}
 
-	_, err = reviewQ.UpdateReview(request.ReviewId, updateData)
+	_, err = reviewQ.UpdateReview(request.Data.ReviewId, updateData)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return

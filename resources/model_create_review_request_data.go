@@ -6,5 +6,8 @@ package resources
 
 type CreateReviewRequestData struct {
 	Attributes ReviewAttributes `json:"attributes"`
-	Type       string           `json:"type"`
+	// product id
+	ProductId int64 `json:"productId"`
+	// type of the resources
+	Type string `json:"type"`
 }

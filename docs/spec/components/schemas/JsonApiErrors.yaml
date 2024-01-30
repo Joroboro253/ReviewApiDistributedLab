@@ -5,4 +5,4 @@ properties:
   errors:
     type: array
     items:
-       $ref: '#/components/schemas/JsonApiErrorObject'
+      $ref: '#/components/schemas/JsonApiErrorObject'

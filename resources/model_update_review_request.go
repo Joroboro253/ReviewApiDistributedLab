@@ -5,6 +5,5 @@
 package resources
 
 type UpdateReviewRequest struct {
-	Data     UpdateReviewData `json:"data"`
-	ReviewId int64            `json:"reviewId"`
+	Data UpdateReviewData `json:"data"`
 }

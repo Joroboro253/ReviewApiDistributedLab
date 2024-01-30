@@ -18,12 +18,12 @@ func NewUpdateReviewRequest(r *http.Request) (resources.UpdateReviewRequest, err
 	}
 
 	reviewIDStr := chi.URLParam(r, "review_id")
-	reviewID, err := strconv.ParseInt(reviewIDStr, 10, 64)
+	reviewId, err := strconv.ParseInt(reviewIDStr, 10, 64)
 	if err != nil {
 		return request, err
 	}
 
-	request.ReviewId = reviewID
+	request.Data.ReviewId = reviewId
 
 	return request, nil
 }
