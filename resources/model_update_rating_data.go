@@ -5,7 +5,7 @@
 package resources
 
 type UpdateRatingData struct {
-	Rating   *float64 `json:"rating,omitempty"`
-	ReviewId *int64   `json:"review_id,omitempty"`
-	UserId   *int64   `json:"user_id,omitempty"`
+	Attributes RatingAttributes `json:"attributes"`
+	RatingId   int64            `json:"ratingId"`
+	Type       string           `json:"type"`
 }

@@ -1,0 +1,12 @@
+type: object
+required:
+  - userId
+  - content
+properties:
+  userId:
+    type: integer
+    format: int64
+    example: 1
+  content:
+    type: string
+    example: Really good one

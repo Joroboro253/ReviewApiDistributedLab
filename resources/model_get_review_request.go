@@ -5,9 +5,10 @@
 package resources
 
 type GetReviewRequest struct {
-	IncludeRatings bool   `json:"include_ratings"`
+	IncludeRatings bool   `json:"includeRatings"`
 	Limit          int64  `json:"limit"`
 	Page           int64  `json:"page"`
-	ReviewId       int64  `json:"review_id"`
-	SortBy         string `json:"sort_by"`
+	ReviewId       int64  `json:"reviewId"`
+	SortBy         string `json:"sortBy"`
+	SortDirection  string `json:"sortDirection"`
 }

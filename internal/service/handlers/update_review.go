@@ -21,17 +21,17 @@ func UpdateReview(w http.ResponseWriter, r *http.Request) {
 	reviewQ := helpers.ReviewsQ(r)
 	var updateData resources.UpdateReviewData
 
-	if request.Data.Attributes.ProductID != nil {
-		updateData.ProductId = request.Data.Attributes.ProductID
+	if request.Data.Attributes.ProductId != 0 {
+		updateData.Attributes.ProductId = request.Data.Attributes.ProductId
 	}
-	if request.Data.Attributes.UserID != nil {
-		updateData.UserId = request.Data.Attributes.UserID
+	if request.Data.Attributes.UserId != 0 {
+		updateData.Attributes.UserId = request.Data.Attributes.UserId
 	}
-	if request.Data.Attributes.Content != nil {
-		updateData.Content = request.Data.Attributes.Content
+	if request.Data.Attributes.Content != "" {
+		updateData.Attributes.Content = request.Data.Attributes.Content
 	}
 
-	_, err = reviewQ.UpdateReview(request.ReviewID, updateData)
+	_, err = reviewQ.UpdateReview(request.Data.ReviewId, updateData)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return

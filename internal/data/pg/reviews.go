@@ -34,32 +34,30 @@ func (q *reviewQImpl) New() data.ReviewQ {
 
 func (q *reviewQImpl) Insert(review data.Review) error {
 	stmt := sq.Insert(reviewsTableName).
-		Columns("product_id", "user_id", "content", "created_at", "updated_at").
-		Values(review.ProductID, review.UserID, review.Content, sq.Expr("CURRENT_TIMESTAMP"), sq.Expr("CURRENT_TIMESTAMP")).
-		Suffix("RETURNING id, product_id, user_id, content, created_at, updated_at") // ?
+		Columns("product_id", "user_id", "content").
+		Values(review.ProductID, review.UserID, review.Content)
 
-	var result data.Review
-	err := q.db.Get(&result, stmt)
+	err := q.db.Exec(stmt)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert rating")
 	}
-	return err
+	return nil
 }
 
 func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateReviewData) (data.Review, error) {
 	builder := sq.Update(reviewsTableName).Where(sq.Eq{"id": reviewID})
 
 	updateFields := false
-	if updateData.ProductId != nil {
-		builder = builder.Set("product_id", *updateData.ProductId)
+	if updateData.Attributes.ProductId != 0 {
+		builder = builder.Set("product_id", updateData.Attributes.ProductId)
 		updateFields = true
 	}
-	if updateData.UserId != nil {
-		builder = builder.Set("user_id", *updateData.UserId)
+	if updateData.Attributes.UserId != 0 {
+		builder = builder.Set("user_id", updateData.Attributes.UserId)
 		updateFields = true
 	}
-	if updateData.Content != nil {
-		builder = builder.Set("content", *updateData.Content)
+	if updateData.Attributes.Content != "" {
+		builder = builder.Set("content", updateData.Attributes.Content)
 		updateFields = true
 	}
 

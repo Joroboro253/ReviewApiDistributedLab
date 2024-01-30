@@ -44,14 +44,14 @@ func (q *ratingQImpl) Insert(rating data.Rating) error {
 
 func (q *ratingQImpl) UpdateRating(ratingID int64, updateData resources.UpdateRatingData) (data.Rating, error) {
 	updateBuilder := sq.Update(ratingsTableName).Where(sq.Eq{"id": ratingID})
-	if updateData.ReviewId != nil {
-		updateBuilder = updateBuilder.Set("review_id", *updateData.ReviewId)
+	if updateData.Attributes.ReviewId != 0 {
+		updateBuilder = updateBuilder.Set("review_id", updateData.Attributes.ReviewId)
 	}
-	if updateData.UserId != nil {
-		updateBuilder = updateBuilder.Set("user_id", *updateData.UserId)
+	if updateData.Attributes.UserId != 0 {
+		updateBuilder = updateBuilder.Set("user_id", updateData.Attributes.UserId)
 	}
-	if updateData.Rating != nil {
-		updateBuilder = updateBuilder.Set("rating", *updateData.Rating)
+	if updateData.Attributes.Rating != 0 {
+		updateBuilder = updateBuilder.Set("rating", updateData.Attributes.Rating)
 	}
 
 	updateSql, args, err := updateBuilder.ToSql()

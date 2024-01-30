@@ -4,10 +4,14 @@
 
 package resources
 
+import "time"
+
 type ReviewWithRatings struct {
-	Attributes    *Review                         `json:"attributes,omitempty"`
-	Id            *int32                          `json:"id,omitempty"`
-	ProductID     *int32                          `json:"productID,omitempty"`
-	Relationships *ReviewWithRatingsRelationships `json:"relationships,omitempty"`
-	Type          *string                         `json:"type,omitempty"`
+	AvgRating float64   `json:"avg_rating"`
+	Content   string    `json:"content"`
+	CreatedAt time.Time `json:"created_at"`
+	Id        int64     `json:"id"`
+	ProductId int64     `json:"product_id"`
+	UpdatedAt time.Time `json:"updated_at"`
+	UserId    int64     `json:"user_id"`
 }

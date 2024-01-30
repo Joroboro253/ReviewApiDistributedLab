@@ -1,68 +1,86 @@
 post:
-  tags:
-    - Review
   summary: Create a new review for a product
   operationId: createReview
+  tags:
+    - Review
+  parameters:
+    - $ref: '#/components/parameters/product_id'
   requestBody:
     required: true
     content:
-      application/json:
+      application/vnd.api+json:
         schema:
           $ref: '#/components/schemas/CreateReviewRequest'
   responses:
     '201':
       description: Review created successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/CreateReviewRequest'
     '400':
       description: Bad request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIError'
     '500':
       description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIError'
 get:
-  tags:
-    - Review
   summary: Get reviews for a product
   operationId: getReviews
+  tags:
+    - Review
+  parameters:
+    - $ref: '#/components/parameters/product_id'
+    - $ref: '#/components/parameters/page_limit_param'
+    - $ref: '#/components/parameters/page_number_param'
+    - $ref: '#/components/parameters/sorting_param'
   responses:
     '200':
       description: List of reviews
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
-            $ref: '#/components/schemas/GetReviewRequest'
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - type
+                    - productId
+                    - attributes
+                  properties:
+                    type:
+                      type: string
+                      example: reviews
+                    productId:
+                      type: string
+                      example: '1'
+                    attributes:
+                      type: object
+                      properties:
+                        UserId:
+                          type: integer
+                          format: int64
+                          example: '1'
+                        Content:
+                          type: string
+                        CreatedAt:
+                          type: string
+                          format: date-time
+                        UpdatedAt:
+                          type: string
+                          format: date-time
+    '400':
+      description: Invalid request parameters
     '500':
       description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIError'
 delete:
   tags:
     - Review
   summary: Delete all reviews for a product
-  operationId: deleteAllByProductId
+  operationId: deleteByProductId
+  parameters:
+    - $ref: '#/components/parameters/product_id'
   responses:
-    '200':
+    '201':
       description: Reviews deleted successfully
     '400':
       description: Bad request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIError'
     '500':
       description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIError'

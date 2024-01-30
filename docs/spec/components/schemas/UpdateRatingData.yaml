@@ -1,14 +1,15 @@
 type: object
+required:
+  - attributes
+  - type
+  - ratingId
 properties:
-  review_id:
+  type:
+    type: string
+    example: Rating
+  ratingId:
     type: integer
     format: int64
-    nullable: true
-  user_id:
-    type: integer
-    format: int64
-    nullable: true
-  rating:
-    type: number
-    format: float64
-    nullable: true
+    example: 1
+  attributes:
+    $ref: '#/components/schemas/RatingAttributes'

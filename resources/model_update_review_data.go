@@ -5,7 +5,7 @@
 package resources
 
 type UpdateReviewData struct {
-	Content   *string `json:"content,omitempty"`
-	ProductId *int64  `json:"product_id,omitempty"`
-	UserId    *int64  `json:"user_id,omitempty"`
+	Attributes RevAttributes `json:"attributes"`
+	ReviewId   int64         `json:"reviewId"`
+	Type       string        `json:"type"`
 }

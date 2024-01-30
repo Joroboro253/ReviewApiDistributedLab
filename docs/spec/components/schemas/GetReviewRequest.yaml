@@ -1,9 +1,19 @@
 type: object
+required:
+  - reviewId
+  - includeRatings
+  - sortBy
+  - page
+  - limit
+  - sortDirection
 properties:
-  review_id:
+  reviewId:
     type: integer
     format: int64
-  sort_by:
+  includeRatings:
+    type: boolean
+    format: bool
+  sortBy:
     type: string
   page:
     type: integer
@@ -11,11 +21,5 @@ properties:
   limit:
     type: integer
     format: int64
-  include_ratings:
-    type: boolean
-required:
-  - review_id
-  - sort_by
-  - page
-  - limit
-  - include_ratings
+  sortDirection:
+    type: string

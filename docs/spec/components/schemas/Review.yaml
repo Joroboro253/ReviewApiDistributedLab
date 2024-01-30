@@ -1,26 +1,30 @@
 type: object
+required:
+  - Id
+  - ProductId
+  - UserId
+  - Content
 properties:
   ID:
     type: integer
     format: int64
-  ProductID:
+    description: Unique identifier of the review
+  ProductId:
     type: integer
     format: int64
-  UserID:
+    description: Identifier of the product being reviewed
+  UserId:
     type: integer
     format: int64
+    description: Identifier of the user who wrote the review
   Content:
     type: string
+    description: Content of the review
   CreatedAt:
     type: string
     format: time.Time
+    description: The date and time when the review was created
   UpdatedAt:
     type: string
     format: time.Time
-required:
-  - ID
-  - ProductID
-  - UserID
-  - Content
-  - CreatedAt
-  - UpdatedAt
+    description: The date and time when the review was last updated

@@ -4,17 +4,19 @@
 
 package resources
 
+import "strconv"
+
 type Key struct {
 	ID           string `json:"id"`
 	ResourceType string `json:"type"`
 }
 
-//func NewKeyInt64(id int64, resourceType ResourceType) Key {
-//    return Key{
-//        ID:   strconv.FormatInt(id, 10),
-//        Type: resourceType,
-//    }
-//}
+func NewKeyInt64(id int64, resourceType ResourceType) Key {
+	return Key{
+		ID: strconv.FormatInt(id, 10),
+		//Type: resourceType,
+	}
+}
 
 func (r *Key) GetKey() Key {
 	return *r

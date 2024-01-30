@@ -21,17 +21,17 @@ func UpdateRating(w http.ResponseWriter, r *http.Request) {
 	ratingQ := helpers.RatingsQ(r)
 	var updateData resources.UpdateRatingData
 
-	if request.Data.Attributes.ReviewID != nil {
-		updateData.ReviewId = request.Data.Attributes.ReviewID
+	if request.Data.RatingId != 0 {
+		updateData.RatingId = request.Data.RatingId
 	}
-	if request.Data.Attributes.UserID != nil {
-		updateData.UserId = request.Data.Attributes.UserID
+	if request.Data.Attributes.UserId != 0 {
+		updateData.Attributes.UserId = request.Data.Attributes.UserId
 	}
-	if request.Data.Attributes.Rating != nil {
-		updateData.Rating = request.Data.Attributes.Rating
+	if request.Data.Attributes.Rating != 0 {
+		updateData.Attributes.Rating = request.Data.Attributes.Rating
 	}
 
-	_, err = ratingQ.UpdateRating(request.RatingID, updateData)
+	_, err = ratingQ.UpdateRating(request.Data.RatingId, updateData)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return

@@ -10,19 +10,11 @@ import (
 	"gitlab.com/distributed_lab/urlval"
 
 	"review_api/internal/service/helpers"
+	"review_api/resources"
 )
 
-type GetReviewRequest struct {
-	ReviewID       int64  `url:"-"`
-	SortBy         string `url:"sort"`
-	Page           int64  `url:"page"`
-	Limit          int64  `url:"limit"`
-	IncludeRatings bool   `url:"include_ratings"`
-	SortDirection  string `url:"sort_dir"`
-}
-
-func NewGetReviewRequest(r *http.Request) (GetReviewRequest, error) {
-	request := GetReviewRequest{}
+func NewGetReviewRequest(r *http.Request) (resources.GetReviewRequest, error) {
+	request := resources.GetReviewRequest{}
 
 	err := urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
@@ -45,7 +37,7 @@ func NewGetReviewRequest(r *http.Request) (GetReviewRequest, error) {
 		request.SortDirection = "asc"
 	}
 
-	request.ReviewID = cast.ToInt64(chi.URLParam(r, "id"))
+	request.ReviewId = cast.ToInt64(chi.URLParam(r, "id"))
 	helpers.Log(r).WithFields(logan.F{"request": request}).Info("Parsed GetReviewRequest")
 
 	return request, nil
