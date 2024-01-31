@@ -1,10 +1,6 @@
 type: object
 required:
   - data
-  - reviewId
 properties:
   data:
     $ref: '#/components/schemas/UpdateReviewData'
-  reviewId:
-    type: integer
-    format: int64

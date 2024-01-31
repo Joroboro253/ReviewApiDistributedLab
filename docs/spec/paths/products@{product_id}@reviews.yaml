@@ -10,28 +10,28 @@ post:
     content:
       application/vnd.api+json:
         schema:
-          type: object
-          required: [data]
-          properties:
-            data:
-              type: object
-              required:
-                - type
-                - attributes
-              properties:
-                type:
-                  type: string
-                  description: "Type of the resource"
-                  example: "reviews"
-                attributes:
-                  $ref: '#/components/schemas/CreateReviewRequest'
+          $ref: '#/components/schemas/CreateReviewRequest'
   responses:
     '201':
       description: Review created successfully
     '400':
-      description: Bad request
+      description: Invalid request parameters
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/JsonApiErrors'
+          examples:
+            BadRequestExample:
+              $ref: '#/components/examples/BadRequestError'
     '500':
       description: Internal server error
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/JsonApiErrors'
+          examples:
+            InternalServerErrorExample:
+              $ref: '#/components/examples/InternalServerError'
 get:
   summary: Get reviews for a product
   operationId: getReviews
@@ -46,18 +46,58 @@ get:
     '200':
       description: List of reviews
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             type: object
             properties:
               data:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ReviewWithRatings'
+                  type: object
+                  required:
+                    - type
+                    - productId
+                    - attributes
+                  properties:
+                    type:
+                      type: string
+                      example: reviews
+                    productId:
+                      type: string
+                      example: '1'
+                    attributes:
+                      type: object
+                      properties:
+                        UserId:
+                          type: integer
+                          format: int64
+                          example: '1'
+                        Content:
+                          type: string
+                        CreatedAt:
+                          type: string
+                          format: date-time
+                        UpdatedAt:
+                          type: string
+                          format: date-time
     '400':
       description: Invalid request parameters
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/JsonApiErrors'
+          examples:
+            BadRequestExample:
+              $ref: '#/components/examples/BadRequestError'
     '500':
       description: Internal server error
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/JsonApiErrors'
+          examples:
+            InternalServerErrorExample:
+              $ref: '#/components/examples/InternalServerError'
 delete:
   tags:
     - Review
@@ -69,6 +109,20 @@ delete:
     '201':
       description: Reviews deleted successfully
     '400':
-      description: Bad request
+      description: Invalid request parameters
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/JsonApiErrors'
+          examples:
+            BadRequestExample:
+              $ref: '#/components/examples/BadRequestError'
     '500':
       description: Internal server error
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/JsonApiErrors'
+          examples:
+            InternalServerErrorExample:
+              $ref: '#/components/examples/InternalServerError'

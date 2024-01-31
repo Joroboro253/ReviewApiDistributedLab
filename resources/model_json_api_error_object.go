@@ -6,11 +6,11 @@ package resources
 
 type JsonApiErrorObject struct {
 	// Internal error code
-	Code *string `json:"code,omitempty"`
+	Code string `json:"code"`
 	// Detailed description of the error
 	Detail string `json:"detail"`
 	// Unique error identifier
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// String representation of HTTP error status
 	Status string `json:"status"`
 	// Brief description of the error

@@ -34,39 +34,34 @@ func (q *reviewQImpl) New() data.ReviewQ {
 
 func (q *reviewQImpl) Insert(review data.Review) error {
 	stmt := sq.Insert(reviewsTableName).
-		Columns("product_id", "user_id", "content", "created_at", "updated_at").
-		Values(review.ProductID, review.UserID, review.Content, sq.Expr("CURRENT_TIMESTAMP"), sq.Expr("CURRENT_TIMESTAMP")).
-		Suffix("RETURNING id, product_id, user_id, content, created_at, updated_at") // ?
+		Columns("product_id", "user_id", "content").
+		Values(review.ProductID, review.UserID, review.Content)
 
-	var result data.Review
-	err := q.db.Get(&result, stmt)
+	err := q.db.Exec(stmt)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert rating")
 	}
-	return err
+	return nil
 }
 
 func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateReviewData) (data.Review, error) {
 	builder := sq.Update(reviewsTableName).Where(sq.Eq{"id": reviewID})
 
-	updateFields := false
-	if updateData.Attributes.ProductId != 0 {
-		builder = builder.Set("product_id", updateData.Attributes.ProductId)
-		updateFields = true
-	}
-	if updateData.Attributes.UserId != 0 {
-		builder = builder.Set("user_id", updateData.Attributes.UserId)
-		updateFields = true
-	}
-	if updateData.Attributes.Content != "" {
-		builder = builder.Set("content", updateData.Attributes.Content)
-		updateFields = true
-	}
+	//updateFields := false
+	//if updateData.Attributes.ProductId != 0 {
+	//	builder = builder.Set("product_id", updateData.Attributes.ProductId)
+	//	updateFields = true
+	//}
+	//if updateData.Attributes.UserId != 0 {
+	//	builder = builder.Set("user_id", updateData.Attributes.UserId)
+	//	updateFields = true
+	//}
+	//if updateData.Attributes.Content != "" {
+	//	builder = builder.Set("content", updateData.Attributes.Content)
+	//	updateFields = true
+	//}
 
-	if !updateFields {
-		return data.Review{}, errors.New("no fields to update")
-	}
-
+	// TODO ToSql не нужен делать напрямую exec builder 19:20
 	query, args, err := builder.ToSql()
 
 	res, err := q.db.ExecWithResult(sq.Expr(query, args...))
@@ -82,6 +77,7 @@ func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateRe
 	}
 
 	var updatedReview data.Review
+	// TODO убрать SELECT 17:15
 	err = q.db.Get(&updatedReview, sq.Select("*").From(reviewsTableName).Where(sq.Eq{"id": reviewID}))
 	if err != nil {
 		return data.Review{}, err
@@ -90,7 +86,7 @@ func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateRe
 	return updatedReview, nil
 }
 
-func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool) ([]data.ReviewWithRatings, error) {
+func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool) ([]data.ReviewWithRatings, *resources.PaginationMeta, error) {
 	var reviewsWithRatings []data.ReviewWithRatings
 
 	sortFields := map[string]string{
@@ -105,6 +101,21 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool)
 		"reviews.content",
 		"reviews.created_at",
 		"reviews.updated_at",
+	}
+
+	// Getting amount of reviews for metadata
+	var totalCount int64
+	countQuery := sq.Select("COUNT(*)").From("reviews")
+	err := q.db.Get(&totalCount, countQuery)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	meta := &resources.PaginationMeta{
+		CurrentPage:  sortParam.Page,
+		ItemsPerPage: sortParam.Limit,
+		TotalItems:   totalCount,
+		TotalPages:   (totalCount + sortParam.Limit - 1) / sortParam.Limit,
 	}
 
 	baseQuery := sq.Select(selectFields...).From("reviews")
@@ -133,12 +144,12 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool)
 
 	query := baseQuery.OrderBy(orderBy).Limit(uint64(sortParam.Limit)).Offset(uint64((sortParam.Page - 1) * sortParam.Limit))
 
-	err := q.db.Select(&reviewsWithRatings, query)
+	err = q.db.Select(&reviewsWithRatings, query)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return reviewsWithRatings, nil
+	return reviewsWithRatings, meta, nil
 }
 
 func (q *reviewQImpl) DeleteAllByProductId(productId int64) error {

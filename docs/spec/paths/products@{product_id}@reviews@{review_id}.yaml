@@ -16,9 +16,23 @@ post:
     '201':
       description: Rating created successfully
     '400':
-      description: Bad request
+      description: Invalid request parameters
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/JsonApiErrors'
+          examples:
+            BadRequestExample:
+              $ref: '#/components/examples/BadRequestError'
     '500':
       description: Internal server error
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/JsonApiErrors'
+          examples:
+            InternalServerErrorExample:
+              $ref: '#/components/examples/InternalServerError'
 patch:
   summary: Update review by review id
   operationId: updateReview
@@ -30,13 +44,27 @@ patch:
   requestBody:
     required: true
     content:
-      application/json:
+      application/vnd.api+json:
         schema:
           $ref: '#/components/schemas/UpdateReviewRequest'
   responses:
     '201':
       description: Review updated successfully
     '400':
-      description: Bad request
+      description: Invalid request parameters
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/JsonApiErrors'
+          examples:
+            BadRequestExample:
+              $ref: '#/components/examples/BadRequestError'
     '500':
       description: Internal server error
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/JsonApiErrors'
+          examples:
+            InternalServerErrorExample:
+              $ref: '#/components/examples/InternalServerError'

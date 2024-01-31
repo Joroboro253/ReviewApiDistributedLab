@@ -1,6 +1,15 @@
 type: object
 required:
+  - type
+  - reviewId
   - attributes
 properties:
+  type:
+    type: string
+    example: review
+  reviewId:
+    type: integer
+    format: int64
+    example: 1
   attributes:
     $ref: '#/components/schemas/RevAttributes'

@@ -1,0 +1,7 @@
+value:
+  errors:
+    - id: bad_request
+      status: '400'
+      code: INVALID_PARAMS
+      title: Invalid Request Parameters
+      detail: One or more of the request parameters are invalid.

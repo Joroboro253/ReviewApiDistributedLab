@@ -1,10 +1,6 @@
 type: object
 required:
   - data
-  - ratingId
 properties:
   data:
     $ref: '#/components/schemas/UpdateRatingData'
-  ratingId:
-    type: integer
-    format: int64
