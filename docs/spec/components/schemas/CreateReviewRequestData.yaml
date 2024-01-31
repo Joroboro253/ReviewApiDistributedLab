@@ -7,7 +7,7 @@ properties:
   type:
     type: string
     description: type of the resources
-    example: review
+    example: reviews
   productId:
     type: integer
     format: int64

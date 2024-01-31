@@ -14,7 +14,7 @@ func NewCreateReviewRequest(r *http.Request) (resources.CreateReviewRequest, err
 	var request resources.CreateReviewRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		return request, errors.Wrap(err, "failed to unmarshal")
+		return request, errors.Wrap(err, "failed to unmarshal create review request")
 	}
 	if err := ValidateCreateReviewRequest(request); err != nil {
 		return request, errors.Wrap(err, "Validation failed")

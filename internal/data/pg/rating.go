@@ -2,6 +2,7 @@ package pg
 
 import (
 	"fmt"
+	"log"
 
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -44,6 +45,7 @@ func (q *ratingQImpl) Insert(rating data.Rating) error {
 
 func (q *ratingQImpl) UpdateRating(ratingID int64, updateData resources.UpdateRatingData) (data.Rating, error) {
 	updateBuilder := sq.Update(ratingsTableName).Where(sq.Eq{"id": ratingID})
+
 	if updateData.Attributes.ReviewId != 0 {
 		updateBuilder = updateBuilder.Set("review_id", updateData.Attributes.ReviewId)
 	}
@@ -54,18 +56,13 @@ func (q *ratingQImpl) UpdateRating(ratingID int64, updateData resources.UpdateRa
 		updateBuilder = updateBuilder.Set("rating", updateData.Attributes.Rating)
 	}
 
-	updateSql, args, err := updateBuilder.ToSql()
+	err := q.db.Exec(updateBuilder)
 	if err != nil {
+		log.Printf("Error execuying querry")
 		return data.Rating{}, err
 	}
 
-	err = q.db.ExecRaw(updateSql, args...)
-
-	fetchBuilder := sq.Select("*").From(ratingsTableName).Where(sq.Eq{"id": ratingID})
-	fetchSql, args, err := fetchBuilder.ToSql()
-
 	var updatedRating data.Rating
-	err = q.db.GetRaw(&updatedRating, fetchSql, args...)
 
 	return updatedRating, nil
 }

@@ -80,6 +80,8 @@ get:
                         UpdatedAt:
                           type: string
                           format: date-time
+              meta:
+                $ref: '#/components/schemas/PaginationMeta'
     '400':
       description: Invalid request parameters
       content:

@@ -5,7 +5,6 @@ import (
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
-	"gitlab.com/distributed_lab/logan/v3"
 
 	"review_api/internal/data"
 	"review_api/internal/service/helpers"
@@ -20,7 +19,6 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-	helpers.Log(r).WithFields(logan.F{"request": request}).Info("Received GetReviewRequest")
 
 	reviewQ := helpers.ReviewsQ(r)
 	sortParam := resources.SortParam{Limit: request.Limit, Page: request.Page, SortBy: request.SortBy, SortDirection: request.SortDirection}
@@ -32,12 +30,11 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := struct {
-		Data []data.ReviewWithRatings `json:"data"`
-		Meta *resources.PaginationMeta
+		Data []data.ReviewWithRatings  `json:"data"`
+		Meta *resources.PaginationMeta `json:"meta"`
 	}{
 		Data: reviews,
 		Meta: meta,
 	}
-	helpers.Log(r).WithField("response", response).Info("Sending response")
 	ape.Render(w, response)
 }

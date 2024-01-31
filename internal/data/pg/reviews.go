@@ -14,6 +14,20 @@ import (
 	"review_api/internal/data"
 )
 
+var sortFields = map[string]string{
+	"date":   "reviews.created_at",
+	"rating": "avg_rating",
+}
+
+var selectFields = []string{
+	"reviews.id",
+	"reviews.product_id",
+	"reviews.user_id",
+	"reviews.content",
+	"reviews.created_at",
+	"reviews.updated_at",
+}
+
 const reviewsTableName = "reviews"
 
 type reviewQImpl struct {
@@ -45,63 +59,31 @@ func (q *reviewQImpl) Insert(review data.Review) error {
 }
 
 func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateReviewData) (data.Review, error) {
-	builder := sq.Update(reviewsTableName).Where(sq.Eq{"id": reviewID})
+	updateBuilder := sq.Update(reviewsTableName).Where(sq.Eq{"id": reviewID})
 
-	//updateFields := false
-	//if updateData.Attributes.ProductId != 0 {
-	//	builder = builder.Set("product_id", updateData.Attributes.ProductId)
-	//	updateFields = true
-	//}
-	//if updateData.Attributes.UserId != 0 {
-	//	builder = builder.Set("user_id", updateData.Attributes.UserId)
-	//	updateFields = true
-	//}
-	//if updateData.Attributes.Content != "" {
-	//	builder = builder.Set("content", updateData.Attributes.Content)
-	//	updateFields = true
-	//}
-
-	// TODO ToSql не нужен делать напрямую exec builder 19:20
-	query, args, err := builder.ToSql()
-
-	res, err := q.db.ExecWithResult(sq.Expr(query, args...))
-
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		log.Printf("Error getting rows affected: %v", err)
-		return data.Review{}, err
+	if updateData.Attributes.ProductId != 0 {
+		updateBuilder = updateBuilder.Set("product_id", updateData.Attributes.ProductId)
+	}
+	if updateData.Attributes.UserId != 0 {
+		updateBuilder = updateBuilder.Set("user_id", updateData.Attributes.UserId)
+	}
+	if updateData.Attributes.Content != "" {
+		updateBuilder = updateBuilder.Set("content", updateData.Attributes.Content)
 	}
 
-	if rowsAffected == 0 {
-		return data.Review{}, errors.New("no rows updated")
+	err := q.db.Exec(updateBuilder)
+	if err != nil {
+		log.Printf("Error executing querry")
+		return data.Review{}, err
 	}
 
 	var updatedReview data.Review
-	// TODO убрать SELECT 17:15
-	err = q.db.Get(&updatedReview, sq.Select("*").From(reviewsTableName).Where(sq.Eq{"id": reviewID}))
-	if err != nil {
-		return data.Review{}, err
-	}
 
 	return updatedReview, nil
 }
 
 func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool) ([]data.ReviewWithRatings, *resources.PaginationMeta, error) {
 	var reviewsWithRatings []data.ReviewWithRatings
-
-	sortFields := map[string]string{
-		"date":   "reviews.created_at",
-		"rating": "avg_rating",
-	}
-
-	selectFields := []string{
-		"reviews.id",
-		"reviews.product_id",
-		"reviews.user_id",
-		"reviews.content",
-		"reviews.created_at",
-		"reviews.updated_at",
-	}
 
 	// Getting amount of reviews for metadata
 	var totalCount int64
@@ -119,7 +101,6 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool)
 	}
 
 	baseQuery := sq.Select(selectFields...).From("reviews")
-
 	if includeRatings {
 		baseQuery = baseQuery.
 			Column("COALESCE(AVG(review_ratings.rating), 0) AS avg_rating").
