@@ -25,7 +25,7 @@ func ValidateUpdateRatingRequest(r resources.UpdateRatingRequest) error {
 	errs := validation.Errors{
 		"/data":                     validation.Validate(&r.Data, validation.Required),
 		"/data/type":                validation.Validate(&r.Data.Type, validation.Required, validation.In("rating")),
-		"/data/ratingId":            validation.Validate(&r.Data.RatingId, validation.Required, validation.Min(1)),
+		"/data/ratingId":            validation.Validate(&r.Data.Id, validation.Required, validation.Min(1)),
 		"/data/attributes":          validation.Validate(&r.Data.Attributes, validation.Required),
 		"/data/attributes/rating":   validation.Validate(&r.Data.Attributes.Rating, validation.Min(float64(1)), validation.Max(float64(5))),
 		"/data/attributes/reviewId": validation.Validate(&r.Data.Attributes.ReviewId, validation.Min(1)),

@@ -44,6 +44,7 @@ require (
 	gitlab.com/distributed_lab/figure v2.1.0+incompatible // indirect
 	gitlab.com/distributed_lab/lorem v0.2.0 // indirect
 	gitlab.com/distributed_lab/running v0.0.0-20200706131153-4af0e83eb96c // indirect
+	gitlab.com/tokend/go v3.16.0+incompatible // indirect
 	golang.org/x/net v0.19.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect

@@ -6,6 +6,6 @@ package resources
 
 type CreateRatingRequestData struct {
 	Attributes RatingAttributes `json:"attributes"`
-	RatingId   int64            `json:"ratingId"`
+	Id         int64            `json:"id"`
 	Type       string           `json:"type"`
 }

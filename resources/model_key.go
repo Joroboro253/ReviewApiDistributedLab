@@ -6,7 +6,6 @@ package resources
 
 import (
 	"strconv"
-	//"gitlab.com/tokend/go/xdr"
 )
 
 type Key struct {

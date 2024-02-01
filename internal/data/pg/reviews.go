@@ -101,6 +101,7 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool)
 	}
 
 	baseQuery := sq.Select(selectFields...).From("reviews")
+
 	if includeRatings {
 		baseQuery = baseQuery.
 			Column("COALESCE(AVG(review_ratings.rating), 0) AS avg_rating").

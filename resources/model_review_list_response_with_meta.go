@@ -5,6 +5,6 @@
 package resources
 
 type ReviewListResponseWithMeta struct {
-	Meta    PaginationMeta     `json:"meta"`
-	Reviews ReviewListResponse `json:"reviews"`
+	Data CreateRatingRequestData `json:"data"`
+	Meta PaginationMeta          `json:"meta"`
 }

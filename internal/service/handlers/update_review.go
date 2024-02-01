@@ -32,7 +32,7 @@ func UpdateReview(w http.ResponseWriter, r *http.Request) {
 
 	reviewQ := helpers.ReviewsQ(r)
 
-	_, err = reviewQ.UpdateReview(request.Data.ReviewId, updateData)
+	_, err = reviewQ.UpdateReview(request.Data.Id, updateData)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
