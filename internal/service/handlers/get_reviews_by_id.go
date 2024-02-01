@@ -15,7 +15,6 @@ import (
 func GetReviews(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewGetReviewRequest(r)
 	if err != nil {
-		helpers.Log(r).WithError(err).Info("Wrong request")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
@@ -29,12 +28,27 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := struct {
-		Data []data.ReviewWithRatings  `json:"data"`
-		Meta *resources.PaginationMeta `json:"meta"`
-	}{
-		Data: reviews,
-		Meta: meta,
+	apiResponse := ConvertToAPIResponse(reviews, meta)
+	ape.Render(w, apiResponse)
+}
+
+func ConvertToAPIResponse(reviews []data.ReviewWithRatings, meta *resources.PaginationMeta) resources.ReviewApiResponse {
+	var apiResponse resources.ReviewApiResponse
+	for _, review := range reviews {
+		resource := resources.ReviewResource{
+			Type:      "reviews",
+			ProductId: review.ProductID,
+			Attributes: resources.ReviewGetAttributes{
+				ReviewId:  review.ID,
+				UserId:    review.UserID,
+				Content:   review.Content,
+				CreatedAt: review.CreatedAt,
+				UpdatedAt: review.UpdatedAt,
+				AvgRating: review.AvgRating,
+			},
+		}
+		apiResponse.Data = append(apiResponse.Data, resource)
 	}
-	ape.Render(w, response)
+	apiResponse.Meta = meta
+	return apiResponse
 }

@@ -1,5 +1,5 @@
 in: query
-name: 'page[number]'
+name: page
 required: false
 schema:
   type: integer

@@ -6,6 +6,7 @@ package resources
 
 import (
 	"time"
+	//"gitlab.com/tokend/go/xdr"
 )
 
 type Review struct {

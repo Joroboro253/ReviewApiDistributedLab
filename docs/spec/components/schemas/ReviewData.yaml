@@ -1,0 +1,15 @@
+type: object
+required:
+  - type
+  - productId
+  - attributes
+properties:
+  type:
+    type: string
+    example: reviews
+  productId:
+    type: integer
+    format: int64
+    example: 2
+  attributes:
+    $ref: '#/components/schemas/ReviewGetAttributes'

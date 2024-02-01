@@ -30,11 +30,6 @@ func UpdateReview(w http.ResponseWriter, r *http.Request) {
 		updateData.Attributes.Content = request.Data.Attributes.Content
 	}
 
-	// TODO это было перенесено из pg 20:00
-	//if !updateFields {
-	//	return data.Review{}, errors.New("no fields to update")
-	//}
-
 	reviewQ := helpers.ReviewsQ(r)
 
 	_, err = reviewQ.UpdateReview(request.Data.ReviewId, updateData)

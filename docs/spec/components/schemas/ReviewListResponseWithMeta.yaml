@@ -1,0 +1,9 @@
+type: object
+required:
+  - reviews
+  - meta
+properties:
+  reviews:
+    $ref: '#/components/schemas/ReviewListResponse'
+  meta:
+    $ref: '#/components/schemas/PaginationMeta'

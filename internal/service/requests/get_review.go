@@ -11,9 +11,9 @@ import (
 	"review_api/resources"
 )
 
-func NewGetReviewRequest(r *http.Request) (resources.GetReviewRequest, error) {
-	request := resources.GetReviewRequest{}
-	request.ReviewId = cast.ToInt64(chi.URLParam(r, "id"))
+func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
+	request := resources.ReviewQueryParams{}
+	request.ProductId = cast.ToInt64(chi.URLParam(r, "product_id"))
 
 	includeRatingsParam := r.URL.Query().Get("includeRatings")
 	if includeRatingsParam != "" {

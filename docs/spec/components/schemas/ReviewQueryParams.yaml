@@ -1,13 +1,13 @@
 type: object
 required:
-  - reviewId
+  - productId
   - includeRatings
   - sortBy
   - page
   - limit
   - sortDirection
 properties:
-  reviewId:
+  productId:
     type: integer
     format: int64
   includeRatings:

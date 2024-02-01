@@ -12,7 +12,6 @@ import (
 
 func NewUpdateRatingRequest(r *http.Request) (resources.UpdateRatingRequest, error) {
 	var request resources.UpdateRatingRequest
-
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return request, errors.Wrap(err, "failed to unmarshal update rating request")
 	}

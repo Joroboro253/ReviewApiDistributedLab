@@ -1,5 +1,5 @@
 in: query
-name: 'page[order]'
+name: sortDirection
 required: false
 schema:
   type: string

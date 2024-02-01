@@ -1,0 +1,27 @@
+type: object
+required:
+  - userId
+  - content
+  - createdAt
+  - updatedAt
+  - avgRating
+properties:
+  userId:
+    type: integer
+    format: int64
+    example: 10
+  content:
+    type: string
+    example: "Extremely disappointed. Stopped working in just a few days. Not worth the money."
+  createdAt:
+    type: string
+    format: time.Time
+    example: "2024-01-31T17:51:15.188795+02:00"
+  updatedAt:
+    type: string
+    format: time.Time
+    example: "2024-01-31T17:51:15.188795+02:00"
+  avgRating:
+    type: number
+    format: float64
+    example: 0
