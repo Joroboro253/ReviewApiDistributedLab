@@ -1,0 +1,6 @@
+in: query
+name: includeRaitings
+required: false
+schema:
+  type: boolean
+description: Include ratings. Use 'true' to include.

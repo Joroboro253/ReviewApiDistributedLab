@@ -18,7 +18,6 @@ func UpdateReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	reviewQ := helpers.ReviewsQ(r)
 	var updateData resources.UpdateReviewData
 
 	if request.Data.Attributes.ProductId != 0 {
@@ -30,6 +29,8 @@ func UpdateReview(w http.ResponseWriter, r *http.Request) {
 	if request.Data.Attributes.Content != "" {
 		updateData.Attributes.Content = request.Data.Attributes.Content
 	}
+
+	reviewQ := helpers.ReviewsQ(r)
 
 	_, err = reviewQ.UpdateReview(request.Data.ReviewId, updateData)
 	if err != nil {

@@ -1,0 +1,25 @@
+type: object
+required:
+  - productId
+  - includeRatings
+  - sortBy
+  - page
+  - limit
+  - sortDirection
+properties:
+  productId:
+    type: integer
+    format: int64
+  includeRatings:
+    type: boolean
+    format: bool
+  sortBy:
+    type: string
+  page:
+    type: integer
+    format: int64
+  limit:
+    type: integer
+    format: int64
+  sortDirection:
+    type: string

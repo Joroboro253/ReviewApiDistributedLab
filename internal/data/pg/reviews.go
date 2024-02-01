@@ -14,6 +14,20 @@ import (
 	"review_api/internal/data"
 )
 
+var sortFields = map[string]string{
+	"date":   "reviews.created_at",
+	"rating": "avg_rating",
+}
+
+var selectFields = []string{
+	"reviews.id",
+	"reviews.product_id",
+	"reviews.user_id",
+	"reviews.content",
+	"reviews.created_at",
+	"reviews.updated_at",
+}
+
 const reviewsTableName = "reviews"
 
 type reviewQImpl struct {
@@ -45,68 +59,48 @@ func (q *reviewQImpl) Insert(review data.Review) error {
 }
 
 func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateReviewData) (data.Review, error) {
-	builder := sq.Update(reviewsTableName).Where(sq.Eq{"id": reviewID})
+	updateBuilder := sq.Update(reviewsTableName).Where(sq.Eq{"id": reviewID})
 
-	updateFields := false
 	if updateData.Attributes.ProductId != 0 {
-		builder = builder.Set("product_id", updateData.Attributes.ProductId)
-		updateFields = true
+		updateBuilder = updateBuilder.Set("product_id", updateData.Attributes.ProductId)
 	}
 	if updateData.Attributes.UserId != 0 {
-		builder = builder.Set("user_id", updateData.Attributes.UserId)
-		updateFields = true
+		updateBuilder = updateBuilder.Set("user_id", updateData.Attributes.UserId)
 	}
 	if updateData.Attributes.Content != "" {
-		builder = builder.Set("content", updateData.Attributes.Content)
-		updateFields = true
+		updateBuilder = updateBuilder.Set("content", updateData.Attributes.Content)
 	}
 
-	if !updateFields {
-		return data.Review{}, errors.New("no fields to update")
-	}
-
-	query, args, err := builder.ToSql()
-
-	res, err := q.db.ExecWithResult(sq.Expr(query, args...))
-
-	rowsAffected, err := res.RowsAffected()
+	err := q.db.Exec(updateBuilder)
 	if err != nil {
-		log.Printf("Error getting rows affected: %v", err)
+		log.Printf("Error executing querry")
 		return data.Review{}, err
-	}
-
-	if rowsAffected == 0 {
-		return data.Review{}, errors.New("no rows updated")
 	}
 
 	var updatedReview data.Review
-	err = q.db.Get(&updatedReview, sq.Select("*").From(reviewsTableName).Where(sq.Eq{"id": reviewID}))
-	if err != nil {
-		return data.Review{}, err
-	}
 
 	return updatedReview, nil
 }
 
-func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool) ([]data.ReviewWithRatings, error) {
+func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool) ([]data.ReviewWithRatings, *resources.PaginationMeta, error) {
 	var reviewsWithRatings []data.ReviewWithRatings
 
-	sortFields := map[string]string{
-		"date":   "reviews.created_at",
-		"rating": "avg_rating",
+	// Getting amount of reviews for metadata
+	var totalCount int64
+	countQuery := sq.Select("COUNT(*)").From("reviews")
+	err := q.db.Get(&totalCount, countQuery)
+	if err != nil {
+		return nil, nil, err
 	}
 
-	selectFields := []string{
-		"reviews.id",
-		"reviews.product_id",
-		"reviews.user_id",
-		"reviews.content",
-		"reviews.created_at",
-		"reviews.updated_at",
+	meta := &resources.PaginationMeta{
+		CurrentPage:  sortParam.Page,
+		ItemsPerPage: sortParam.Limit,
+		TotalItems:   totalCount,
+		TotalPages:   (totalCount + sortParam.Limit - 1) / sortParam.Limit,
 	}
 
 	baseQuery := sq.Select(selectFields...).From("reviews")
-
 	if includeRatings {
 		baseQuery = baseQuery.
 			Column("COALESCE(AVG(review_ratings.rating), 0) AS avg_rating").
@@ -131,12 +125,12 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool)
 
 	query := baseQuery.OrderBy(orderBy).Limit(uint64(sortParam.Limit)).Offset(uint64((sortParam.Page - 1) * sortParam.Limit))
 
-	err := q.db.Select(&reviewsWithRatings, query)
+	err = q.db.Select(&reviewsWithRatings, query)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return reviewsWithRatings, nil
+	return reviewsWithRatings, meta, nil
 }
 
 func (q *reviewQImpl) DeleteAllByProductId(productId int64) error {

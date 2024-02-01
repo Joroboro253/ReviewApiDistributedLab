@@ -4,7 +4,10 @@
 
 package resources
 
-import "time"
+import (
+	"time"
+	//"gitlab.com/tokend/go/xdr"
+)
 
 type Review struct {
 	// Content of the review

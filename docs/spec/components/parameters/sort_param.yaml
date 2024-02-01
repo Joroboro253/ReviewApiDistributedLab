@@ -1,0 +1,6 @@
+in: query
+name: sortBy
+required: false
+schema:
+  type: string
+description: 'Sort the results by a specified field, e.g., ''AvgRating'', ''createdAt''.'

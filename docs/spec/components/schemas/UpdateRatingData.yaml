@@ -6,7 +6,7 @@ required:
 properties:
   type:
     type: string
-    example: Rating
+    example: rating
   ratingId:
     type: integer
     format: int64

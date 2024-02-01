@@ -1,24 +1,23 @@
 package requests
 
 import (
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi"
 	"github.com/spf13/cast"
-	"gitlab.com/distributed_lab/logan/v3"
 
-	"gitlab.com/distributed_lab/urlval"
-
-	"review_api/internal/service/helpers"
 	"review_api/resources"
 )
 
-func NewGetReviewRequest(r *http.Request) (resources.GetReviewRequest, error) {
-	request := resources.GetReviewRequest{}
+func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
+	request := resources.ReviewQueryParams{}
+	request.ProductId = cast.ToInt64(chi.URLParam(r, "product_id"))
 
-	err := urlval.Decode(r.URL.Query(), &request)
-	if err != nil {
-		return request, err
+	includeRatingsParam := r.URL.Query().Get("includeRatings")
+	if includeRatingsParam != "" {
+		request.IncludeRatings, _ = strconv.ParseBool(includeRatingsParam)
 	}
 
 	if request.Page == 0 {
@@ -36,9 +35,7 @@ func NewGetReviewRequest(r *http.Request) (resources.GetReviewRequest, error) {
 	if request.SortDirection == "" {
 		request.SortDirection = "asc"
 	}
-
-	request.ReviewId = cast.ToInt64(chi.URLParam(r, "id"))
-	helpers.Log(r).WithFields(logan.F{"request": request}).Info("Parsed GetReviewRequest")
+	log.Printf("Before includeRatings check: includeRatings = %v", request)
 
 	return request, nil
 }

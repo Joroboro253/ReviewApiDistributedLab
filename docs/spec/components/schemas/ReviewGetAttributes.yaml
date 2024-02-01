@@ -1,0 +1,32 @@
+type: object
+required:
+  - reviewId
+  - userId
+  - content
+  - createdAt
+  - updatedAt
+  - avgRating
+properties:
+  reviewId:
+    type: integer
+    format: int64
+    example: 3
+  userId:
+    type: integer
+    format: int64
+    example: 3
+  content:
+    type: string
+    example: "Updated content 5"
+  createdAt:
+    type: string
+    format: time.Time
+    example: "2024-01-31T17:51:15.188795+02:00"
+  updatedAt:
+    type: string
+    format: time.Time
+    example: "2024-01-31T17:51:15.188795+02:00"
+  avgRating:
+    type: number
+    format: float64
+    example: 0

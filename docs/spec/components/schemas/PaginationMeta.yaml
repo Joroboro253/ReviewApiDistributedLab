@@ -1,0 +1,23 @@
+type: object
+required:
+  - totalItems
+  - itemsPerPage
+  - totalPages
+  - currentPage
+properties:
+  totalItems:
+    type: integer
+    format: int64
+    description: The total number of element int the result
+  itemsPerPage:
+    type: integer
+    format: int64
+    description: Number of elements on one page
+  totalPages:
+    type: integer
+    format: int64
+    description: Total number of pages
+  currentPage:
+    type: integer
+    format: int64
+    description: Current page

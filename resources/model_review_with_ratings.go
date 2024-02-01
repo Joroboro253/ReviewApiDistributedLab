@@ -4,7 +4,9 @@
 
 package resources
 
-import "time"
+import (
+	"time"
+)
 
 type ReviewWithRatings struct {
 	AvgRating float64   `json:"avg_rating"`
