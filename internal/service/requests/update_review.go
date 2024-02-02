@@ -25,7 +25,7 @@ func ValidateUpdateReviewRequest(r resources.UpdateReviewRequest) error {
 	errs := validation.Errors{
 		"/data":                    validation.Validate(&r.Data, validation.Required),
 		"/data/type":               validation.Validate(&r.Data.Type, validation.Required, validation.In("review")),
-		"/data/reviewId":           validation.Validate(&r.Data.ReviewId, validation.Required, validation.Min(1)),
+		"/data/reviewId":           validation.Validate(&r.Data.Id, validation.Required, validation.Min(0)),
 		"/data/attributes":         validation.Validate(&r.Data.Attributes, validation.Required),
 		"/data/attributes/content": validation.Validate(&r.Data.Attributes.Content, validation.Length(10, 255)),
 		"/data/attributes/userId":  validation.Validate(&r.Data.Attributes.UserId, validation.Min(1)),

@@ -2,12 +2,12 @@ type: object
 required:
   - attributes
   - type
-  - ratingId
+  - id
 properties:
   type:
     type: string
     example: rating
-  ratingId:
+  id:
     type: integer
     format: int64
     example: 1

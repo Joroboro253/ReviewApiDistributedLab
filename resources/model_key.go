@@ -4,10 +4,7 @@
 
 package resources
 
-import (
-	"strconv"
-	//"gitlab.com/tokend/go/xdr"
-)
+import "strconv"
 
 type Key struct {
 	ID           string `json:"id"`

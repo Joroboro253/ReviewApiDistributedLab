@@ -1,13 +1,13 @@
 type: object
 required:
   - type
-  - reviewId
+  - id
   - attributes
 properties:
   type:
     type: string
     example: review
-  reviewId:
+  id:
     type: integer
     format: int64
     example: 1

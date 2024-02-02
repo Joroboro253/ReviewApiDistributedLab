@@ -4,8 +4,10 @@ required:
   - ProductId
   - UserId
   - Content
+  - UpdatedAt
+  - CreatedAt
 properties:
-  ID:
+  Id:
     type: integer
     format: int64
     description: Unique identifier of the review

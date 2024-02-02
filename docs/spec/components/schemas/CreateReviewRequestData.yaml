@@ -1,17 +1,17 @@
 type: object
 required:
   - type
-  - productId
+  - id
   - attributes
 properties:
   type:
     type: string
     description: type of the resources
-    example: reviews
-  productId:
+    example: review
+  id:
     type: integer
     format: int64
-    description: product id
+    description: review id
     example: 1
   attributes:
     $ref: '#/components/schemas/ReviewAttributes'

@@ -6,6 +6,6 @@ package resources
 
 type UpdateReviewData struct {
 	Attributes RevAttributes `json:"attributes"`
-	ReviewId   int64         `json:"reviewId"`
+	Id         int64         `json:"id"`
 	Type       string        `json:"type"`
 }

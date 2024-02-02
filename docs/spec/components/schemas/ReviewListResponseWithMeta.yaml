@@ -1,9 +1,9 @@
 type: object
 required:
-  - reviews
+  - data
   - meta
 properties:
-  reviews:
-    $ref: '#/components/schemas/ReviewListResponse'
+  data:
+    $ref: '#/components/schemas/CreateRatingRequestData'
   meta:
     $ref: '#/components/schemas/PaginationMeta'
