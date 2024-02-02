@@ -21,6 +21,7 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 
 	reviewQ := helpers.ReviewsQ(r)
 	sortParam := resources.SortParam{Limit: request.Limit, Page: request.Page, SortBy: request.SortBy, SortDirection: request.SortDirection}
+	helpers.Log(r).WithError(err).Debugf("Sorting params in handler: %+v", sortParam)
 	reviews, meta, err := reviewQ.Select(sortParam, request.IncludeRatings)
 	if err != nil {
 		helpers.Log(r).WithError(err).Info("Internal server Error")

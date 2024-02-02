@@ -84,7 +84,7 @@ func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateRe
 
 func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool) ([]data.ReviewWithRatings, *resources.PaginationMeta, error) {
 	var reviewsWithRatings []data.ReviewWithRatings
-
+	log.Printf("Sorting params in pg: %+v", sortParam)
 	// Getting amount of reviews for metadata
 	var totalCount int64
 	countQuery := sq.Select("COUNT(*)").From("reviews")
@@ -111,17 +111,9 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool)
 
 	var orderBy string
 	if field, ok := sortFields[sortParam.SortBy]; ok {
-		if sortParam.SortDirection == "desc" {
-			orderBy = fmt.Sprintf("%s DESC", field)
-		} else {
-			orderBy = fmt.Sprintf("%s ASC", field)
-		}
+		orderBy = fmt.Sprintf("%s %s", field, sortParam.SortDirection)
 	} else {
-		if sortParam.SortDirection == "desc" {
-			orderBy = "reviews.created_at DESC"
-		} else {
-			orderBy = "reviews.created_at ASC"
-		}
+		orderBy = fmt.Sprintf("reviews.created_at %s", sortParam.SortDirection)
 	}
 
 	query := baseQuery.OrderBy(orderBy).Limit(uint64(sortParam.Limit)).Offset(uint64((sortParam.Page - 1) * sortParam.Limit))

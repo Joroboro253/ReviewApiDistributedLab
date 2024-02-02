@@ -1,7 +1,6 @@
 package requests
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
@@ -20,22 +19,33 @@ func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
 		request.IncludeRatings, _ = strconv.ParseBool(includeRatingsParam)
 	}
 
-	if request.Page == 0 {
-		request.Page = 1
-	}
-
-	if request.Limit == 0 {
+	limitParam := r.URL.Query().Get("limit")
+	if limitParam != "" {
+		request.Limit, _ = strconv.ParseInt(limitParam, 10, 64)
+	} else {
 		request.Limit = 10
 	}
 
-	if request.SortBy == "" {
+	pageParam := r.URL.Query().Get("page")
+	if pageParam != "" {
+		request.Page, _ = strconv.ParseInt(pageParam, 10, 64)
+	} else {
+		request.Page = 1
+	}
+
+	sortByParam := r.URL.Query().Get("sortBy")
+	if sortByParam != "" {
+		request.SortBy = sortByParam
+	} else {
 		request.SortBy = "date"
 	}
 
-	if request.SortDirection == "" {
+	sortDirectionParam := r.URL.Query().Get("sortDirection")
+	if sortDirectionParam != "" {
+		request.SortDirection = sortDirectionParam
+	} else {
 		request.SortDirection = "asc"
 	}
-	log.Printf("Before includeRatings check: includeRatings = %v", request)
 
 	return request, nil
 }
