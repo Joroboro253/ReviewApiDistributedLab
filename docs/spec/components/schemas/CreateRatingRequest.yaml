@@ -3,6 +3,4 @@ required:
   - data
 properties:
   data:
-    type: array
-    items:
-      $ref: '#/components/schemas/CreateRatingRequestData'
+    $ref: '#/components/schemas/CreateRatingRequestData'

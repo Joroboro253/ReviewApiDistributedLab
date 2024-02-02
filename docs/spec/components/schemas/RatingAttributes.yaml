@@ -11,5 +11,5 @@ properties:
     type: integer
     format: int64
   rating:
-    type: number
-    format: float64
+    type: integer
+    format: int64
