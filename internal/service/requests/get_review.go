@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -15,6 +16,7 @@ import (
 func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
 	request := resources.ReviewQueryParams{}
 	request.ProductId = cast.ToInt64(chi.URLParam(r, "product_id"))
+	log.Printf("Product id %v", request.ProductId)
 
 	limitParam := r.URL.Query().Get("limit")
 	if limitParam != "" {

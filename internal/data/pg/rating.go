@@ -1,7 +1,6 @@
 package pg
 
 import (
-	"fmt"
 	"log"
 
 	sq "github.com/Masterminds/squirrel"
@@ -16,14 +15,12 @@ import (
 const ratingsTableName = "review_ratings"
 
 type ratingQImpl struct {
-	db  *pgdb.DB
-	sql sq.SelectBuilder
+	db *pgdb.DB
 }
 
 func NewRatingQ(db *pgdb.DB) data.RatingQ {
 	return &ratingQImpl{
-		db:  db.Clone(),
-		sql: sq.Select("r.*").From(fmt.Sprintf("%s as r", reviewsTableName)),
+		db: db.Clone(),
 	}
 }
 

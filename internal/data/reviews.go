@@ -9,7 +9,7 @@ import (
 type ReviewQ interface {
 	New() ReviewQ
 	DeleteAllByProductId(productId int64) error
-	Select(sortParam resources.SortParam, includeRatings bool) ([]ReviewWithRatings, *resources.PaginationMeta, error)
+	Select(sortParam resources.SortParam, includeRatings bool, productId int64) ([]ReviewWithRatings, *resources.PaginationMeta, error)
 	UpdateReview(reviewID int64, updateData resources.UpdateReviewData) (Review, error)
 	Insert(data Review) error
 }

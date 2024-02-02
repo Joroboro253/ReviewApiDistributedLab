@@ -29,6 +29,6 @@ func ValidateCreateReviewRequest(r resources.CreateReviewRequest) error {
 		"/data/id":                 validation.Validate(&r.Data.Id, validation.Required, validation.Min(0)),
 		"/data/attributes":         validation.Validate(&r.Data.Attributes, validation.Required),
 		"/data/attributes/content": validation.Validate(&r.Data.Attributes.Content, validation.Required, validation.Length(10, 255)),
-		"/data/attributes/userId":  validation.Validate(&r.Data.Attributes.UserId, validation.Required, validation.Min(1)),
+		"/data/attributes/userId":  validation.Validate(&r.Data.Attributes.UserId, validation.Required, validation.Min(0)),
 	}.Filter()
 }

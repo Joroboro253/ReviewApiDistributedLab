@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
+	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 
@@ -20,8 +22,9 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 
 	reviewQ := helpers.ReviewsQ(r)
 	sortParam := resources.SortParam{Limit: request.Limit, Page: request.Page, SortBy: request.SortBy, SortDirection: request.SortDirection}
+	productId, err := strconv.ParseInt(chi.URLParam(r, "product_id"), 10, 64)
 	helpers.Log(r).WithError(err).Debugf("Sorting params in handler: %+v", sortParam)
-	reviews, meta, err := reviewQ.Select(sortParam, request.IncludeRatings)
+	reviews, meta, err := reviewQ.Select(sortParam, request.IncludeRatings, productId)
 	if err != nil {
 		helpers.Log(r).WithError(err).Info("Internal server Error")
 		ape.RenderErr(w, problems.InternalError())
