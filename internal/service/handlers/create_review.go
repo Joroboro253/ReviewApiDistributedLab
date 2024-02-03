@@ -19,9 +19,9 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = helpers.ReviewsQ(r).Insert(data.Review{
-		ProductID: request.Data.Id,
-		UserID:    request.Data.Attributes.UserId,
-		Content:   request.Data.Attributes.Content,
+		ID:      request.Data.Id,
+		UserID:  request.Data.Attributes.UserId,
+		Content: request.Data.Attributes.Content,
 	})
 
 	if err != nil {

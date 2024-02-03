@@ -19,7 +19,7 @@ func CreateRating(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = helpers.RatingsQ(r).Insert(data.Rating{
-		ReviewID: request.Data.Attributes.ReviewId,
+		ReviewID: request.Data.Id,
 		UserID:   request.Data.Attributes.UserId,
 		Rating:   request.Data.Attributes.Rating,
 	})

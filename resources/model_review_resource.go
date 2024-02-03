@@ -6,6 +6,6 @@ package resources
 
 type ReviewResource struct {
 	Attributes ReviewGetAttributes `json:"attributes"`
-	ProductId  int64               `json:"productId"`
+	Id         int64               `json:"id"`
 	Type       string              `json:"type"`
 }

@@ -1,13 +1,13 @@
 type: object
 required:
   - type
-  - productId
+  - id
   - attributes
 properties:
   type:
     type: string
     example: reviews
-  productId:
+  id:
     type: integer
     format: int64
     example: 1

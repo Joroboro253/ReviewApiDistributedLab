@@ -1,15 +1,18 @@
 type: object
 required:
-  - reviewId
   - userId
+  - reviewId
   - rating
 properties:
   reviewId:
     type: integer
     format: int64
+    example: 1
   userId:
     type: integer
     format: int64
+    example: 2
   rating:
     type: integer
     format: int64
+    example: 4

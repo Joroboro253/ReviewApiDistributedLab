@@ -4,6 +4,6 @@ required:
   - meta
 properties:
   data:
-    $ref: '#/components/schemas/CreateRatingRequestData'
+    $ref: '#/components/schemas/ReviewResource'
   meta:
     $ref: '#/components/schemas/PaginationMeta'

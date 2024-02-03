@@ -43,8 +43,8 @@ func (q *ratingQImpl) Insert(rating data.Rating) error {
 func (q *ratingQImpl) UpdateRating(ratingID int64, updateData resources.UpdateRatingData) (data.Rating, error) {
 	updateBuilder := sq.Update(ratingsTableName).Where(sq.Eq{"id": ratingID})
 
-	if updateData.Attributes.ReviewId != 0 {
-		updateBuilder = updateBuilder.Set("review_id", updateData.Attributes.ReviewId)
+	if updateData.Id != 0 {
+		updateBuilder = updateBuilder.Set("review_id", updateData.Id)
 	}
 	if updateData.Attributes.UserId != 0 {
 		updateBuilder = updateBuilder.Set("user_id", updateData.Attributes.UserId)

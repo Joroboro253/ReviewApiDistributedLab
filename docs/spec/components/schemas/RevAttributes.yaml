@@ -7,8 +7,11 @@ properties:
   productId:
     type: integer
     format: int64
+    example: 1
   userId:
     type: integer
     format: int64
+    example: 1
   content:
     type: string
+    example: Product broke on second day of use

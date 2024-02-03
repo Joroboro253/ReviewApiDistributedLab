@@ -9,15 +9,19 @@ properties:
     type: integer
     format: int64
     description: The total number of element int the result
+    example: 10
   itemsPerPage:
     type: integer
     format: int64
     description: Number of elements on one page
+    example: 5
   totalPages:
     type: integer
     format: int64
     description: Total number of pages
+    example: 2
   currentPage:
     type: integer
     format: int64
     description: Current page
+    example: 1
