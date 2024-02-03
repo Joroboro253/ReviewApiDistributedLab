@@ -86,7 +86,7 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool,
 
 	// Getting amount of reviews for metadata
 	var totalCount int64
-	countQuery := sq.Select("COUNT(*)").From("reviews")
+	countQuery := sq.Select("COUNT(*)").From("reviews").Where(sq.Eq{"product_id": productId})
 	err := q.db.Get(&totalCount, countQuery)
 	if err != nil {
 		return nil, nil, err
