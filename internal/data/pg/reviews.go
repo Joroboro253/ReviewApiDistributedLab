@@ -15,8 +15,8 @@ import (
 )
 
 var sortFields = map[string]string{
-	"date":   "reviews.created_at",
-	"rating": "avg_rating",
+	"date":      "reviews.created_at",
+	"avgRating": "avg_rating",
 }
 
 var selectFields = []string{
@@ -108,8 +108,10 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool,
 			GroupBy("reviews.id", "reviews.product_id", "reviews.user_id", "reviews.content", "reviews.created_at", "reviews.updated_at")
 	}
 
+	// Проблема где-то здесь
 	var orderBy string
 	if field, ok := sortFields[sortParam.SortBy]; ok {
+		log.Printf("Field with sort param: %s", sortParam.SortBy)
 		orderBy = fmt.Sprintf("%s %s", field, sortParam.SortDirection)
 	} else {
 		orderBy = fmt.Sprintf("reviews.created_at %s", sortParam.SortDirection)

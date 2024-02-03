@@ -50,7 +50,7 @@ func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
 	}
 
 	sortByParam := r.URL.Query().Get("sortBy")
-	if sortByParam != "" && (sortByParam == "date" || sortByParam == "rating" || sortByParam == "name") {
+	if sortByParam != "" && (sortByParam == "date" || sortByParam == "avgRating") {
 		request.SortBy = sortByParam
 	} else {
 		request.SortBy = "date"

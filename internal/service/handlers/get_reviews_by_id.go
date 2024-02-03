@@ -19,10 +19,10 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-
+	productId, err := strconv.ParseInt(chi.URLParam(r, "product_id"), 10, 64)
 	reviewQ := helpers.ReviewsQ(r)
 	sortParam := resources.SortParam{Limit: request.Limit, Page: request.Page, SortBy: request.SortBy, SortDirection: request.SortDirection}
-	productId, err := strconv.ParseInt(chi.URLParam(r, "product_id"), 10, 64)
+
 	helpers.Log(r).WithError(err).Debugf("Sorting params in handler: %+v", sortParam)
 	reviews, meta, err := reviewQ.Select(sortParam, request.IncludeRatings, productId)
 	if err != nil {
