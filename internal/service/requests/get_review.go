@@ -1,13 +1,10 @@
 package requests
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
-	"github.com/go-chi/chi"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/spf13/cast"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"review_api/resources"
@@ -15,8 +12,7 @@ import (
 
 func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
 	request := resources.ReviewQueryParams{}
-	request.ProductId = cast.ToInt64(chi.URLParam(r, "product_id"))
-	log.Printf("Product id %v", request.ProductId)
+	//request.ProductId = cast.ToInt64(chi.URLParam(r, "product_id"))
 
 	limitParam := r.URL.Query().Get("limit")
 	if limitParam != "" {

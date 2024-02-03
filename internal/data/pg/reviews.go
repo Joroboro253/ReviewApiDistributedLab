@@ -82,11 +82,10 @@ func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateRe
 
 func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool, productId int64) ([]data.ReviewWithRatings, *resources.PaginationMeta, error) {
 	var reviewsWithRatings []data.ReviewWithRatings
-	log.Printf("Sorting params in pg: %+v", sortParam)
 
 	// Getting amount of reviews for metadata
 	var totalCount int64
-	countQuery := sq.Select("COUNT(*)").From("reviews").Where(sq.Eq{"product_id": productId})
+	countQuery := sq.Select("COUNT(*)").From(reviewsTableName).Where(sq.Eq{"product_id": productId})
 	err := q.db.Get(&totalCount, countQuery)
 	if err != nil {
 		return nil, nil, err
@@ -108,10 +107,8 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool,
 			GroupBy("reviews.id", "reviews.product_id", "reviews.user_id", "reviews.content", "reviews.created_at", "reviews.updated_at")
 	}
 
-	// Проблема где-то здесь
 	var orderBy string
 	if field, ok := sortFields[sortParam.SortBy]; ok {
-		log.Printf("Field with sort param: %s", sortParam.SortBy)
 		orderBy = fmt.Sprintf("%s %s", field, sortParam.SortDirection)
 	} else {
 		orderBy = fmt.Sprintf("reviews.created_at %s", sortParam.SortDirection)

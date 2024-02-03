@@ -63,3 +63,9 @@ func (q *ratingQImpl) UpdateRating(ratingID int64, updateData resources.UpdateRa
 
 	return updatedRating, nil
 }
+
+func (q *ratingQImpl) DeleteRating(ratingID int64) error {
+	stmt := sq.Delete(ratingsTableName).Where("id = ?", ratingID)
+	err := q.db.Exec(stmt)
+	return err
+}
