@@ -4,6 +4,8 @@ required:
   - meta
 properties:
   data:
-    $ref: '#/components/schemas/ReviewResource'
+    type: array
+    items:
+      $ref: '#/components/schemas/ReviewResource'
   meta:
     $ref: '#/components/schemas/PaginationMeta'
