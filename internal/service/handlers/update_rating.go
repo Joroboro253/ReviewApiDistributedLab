@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
-	"gitlab.com/distributed_lab/ape/problems"
 
 	"review_api/internal/service/helpers"
 	"review_api/internal/service/requests"
@@ -14,7 +13,7 @@ import (
 func UpdateRating(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewUpdateRatingRequest(r)
 	if err != nil {
-		ape.RenderErr(w, problems.BadRequest(err)...)
+		ape.RenderErr(w, helpers.NewInvalidParamsError())
 		return
 	}
 
@@ -33,7 +32,7 @@ func UpdateRating(w http.ResponseWriter, r *http.Request) {
 
 	_, err = ratingQ.UpdateRating(request.Data.Id, updateData)
 	if err != nil {
-		ape.RenderErr(w, problems.InternalError())
+		ape.RenderErr(w, helpers.NewInternalServerError())
 		return
 	}
 

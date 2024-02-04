@@ -6,7 +6,6 @@ import (
 
 	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/ape"
-	"gitlab.com/distributed_lab/ape/problems"
 
 	"review_api/internal/service/helpers"
 	"review_api/internal/service/requests"
@@ -16,12 +15,12 @@ import (
 func GetReviews(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewGetReviewRequest(r)
 	if err != nil {
-		ape.RenderErr(w, problems.BadRequest(err)...)
+		ape.RenderErr(w, helpers.NewInvalidParamsError())
 		return
 	}
 	productId, err := strconv.ParseInt(chi.URLParam(r, "product_id"), 10, 64)
 	if err != nil {
-		ape.RenderErr(w, problems.BadRequest(err)...)
+		ape.RenderErr(w, helpers.NewInternalServerError())
 		return
 	}
 	reviewQ := helpers.ReviewsQ(r)
@@ -32,7 +31,7 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 	reviews, meta, err := reviewQ.Select(sortParam, request.IncludeRatings, productId)
 	if err != nil {
 		helpers.Log(r).WithError(err).Info("Internal server Error")
-		ape.RenderErr(w, problems.InternalError())
+		ape.RenderErr(w, helpers.NewInternalServerError())
 		return
 	}
 
