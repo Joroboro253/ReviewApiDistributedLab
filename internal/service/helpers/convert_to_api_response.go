@@ -16,6 +16,7 @@ func ConvertToAPIResponse(reviews []data.ReviewWithRatings, meta *resources.Pagi
 				Content:   review.Content,
 				CreatedAt: review.CreatedAt,
 				UpdatedAt: review.UpdatedAt,
+				Rating:    review.Rating,
 				AvgRating: review.AvgRating,
 			},
 		}

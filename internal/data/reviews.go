@@ -19,6 +19,7 @@ type Review struct {
 	ProductID int64     `db:"product_id"`
 	UserID    int64     `db:"user_id"`
 	Content   string    `db:"content"`
+	Rating    int64     `db:"rating"`
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
 }
@@ -28,6 +29,7 @@ type ReviewWithRatings struct {
 	ProductID int64     `db:"product_id"`
 	UserID    int64     `db:"user_id"`
 	Content   string    `db:"content"`
+	Rating    int64     `db:"rating"`
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
 	AvgRating float64   `db:"avg_rating"`

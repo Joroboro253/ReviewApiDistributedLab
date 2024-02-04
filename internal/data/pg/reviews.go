@@ -15,13 +15,15 @@ import (
 )
 
 var sortFields = map[string]string{
-	"date":      "reviews.created_at",
-	"avgRating": "avg_rating",
+	"date":          "reviews.created_at",
+	"avgRating":     "avg_rating",
+	"productRating": "reviews.rating",
 }
 
 var selectFields = []string{
 	"reviews.id",
 	"reviews.product_id",
+	"reviews.rating",
 	"reviews.user_id",
 	"reviews.content",
 	"reviews.created_at",
@@ -45,9 +47,10 @@ func (q *reviewQImpl) New() data.ReviewQ {
 }
 
 func (q *reviewQImpl) Insert(review data.Review) error {
+	log.Printf("Product id: %d", review.ProductID)
 	stmt := sq.Insert(reviewsTableName).
-		Columns("product_id", "user_id", "content").
-		Values(review.ProductID, review.UserID, review.Content)
+		Columns("product_id", "user_id", "content", "rating").
+		Values(review.ProductID, review.UserID, review.Content, review.Rating)
 
 	err := q.db.Exec(stmt)
 	if err != nil {
@@ -120,7 +123,7 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool,
 	if err != nil {
 		return nil, nil, err
 	}
-
+	log.Printf("Review with ratings %v", reviewsWithRatings)
 	return reviewsWithRatings, meta, nil
 }
 

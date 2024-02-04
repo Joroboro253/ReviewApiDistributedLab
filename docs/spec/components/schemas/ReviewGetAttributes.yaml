@@ -5,6 +5,7 @@ required:
   - createdAt
   - updatedAt
   - avgRating
+  - rating
 properties:
   userId:
     type: integer
@@ -25,3 +26,7 @@ properties:
     type: number
     format: float64
     example: 4.5
+  rating:
+    type: integer
+    format: int64
+    example: 3
