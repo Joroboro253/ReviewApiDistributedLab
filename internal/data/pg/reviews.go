@@ -15,13 +15,15 @@ import (
 )
 
 var sortFields = map[string]string{
-	"date":   "reviews.created_at",
-	"rating": "avg_rating",
+	"date":          "reviews.created_at",
+	"avgRating":     "avg_rating",
+	"productRating": "reviews.rating",
 }
 
 var selectFields = []string{
 	"reviews.id",
 	"reviews.product_id",
+	"reviews.rating",
 	"reviews.user_id",
 	"reviews.content",
 	"reviews.created_at",
@@ -31,14 +33,12 @@ var selectFields = []string{
 const reviewsTableName = "reviews"
 
 type reviewQImpl struct {
-	db  *pgdb.DB
-	sql sq.SelectBuilder
+	db *pgdb.DB
 }
 
 func NewReviewsQ(db *pgdb.DB) data.ReviewQ {
 	return &reviewQImpl{
-		db:  db.Clone(),
-		sql: sq.Select("r.*").From(fmt.Sprintf("%s as r", reviewsTableName)),
+		db: db.Clone(),
 	}
 }
 
@@ -47,13 +47,14 @@ func (q *reviewQImpl) New() data.ReviewQ {
 }
 
 func (q *reviewQImpl) Insert(review data.Review) error {
+	log.Printf("Product id: %d", review.ProductID)
 	stmt := sq.Insert(reviewsTableName).
-		Columns("product_id", "user_id", "content").
-		Values(review.ProductID, review.UserID, review.Content)
+		Columns("product_id", "user_id", "content", "rating").
+		Values(review.ProductID, review.UserID, review.Content, review.Rating)
 
 	err := q.db.Exec(stmt)
 	if err != nil {
-		return errors.Wrap(err, "failed to insert rating")
+		return errors.Wrap(err, "failed to insert review")
 	}
 	return nil
 }
@@ -82,12 +83,12 @@ func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateRe
 	return updatedReview, nil
 }
 
-func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool) ([]data.ReviewWithRatings, *resources.PaginationMeta, error) {
+func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool, productId int64) ([]data.ReviewWithRatings, *resources.PaginationMeta, error) {
 	var reviewsWithRatings []data.ReviewWithRatings
-	log.Printf("Sorting params in pg: %+v", sortParam)
+
 	// Getting amount of reviews for metadata
 	var totalCount int64
-	countQuery := sq.Select("COUNT(*)").From("reviews")
+	countQuery := sq.Select("COUNT(*)").From(reviewsTableName).Where(sq.Eq{"product_id": productId})
 	err := q.db.Get(&totalCount, countQuery)
 	if err != nil {
 		return nil, nil, err
@@ -100,7 +101,7 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool)
 		TotalPages:   (totalCount + sortParam.Limit - 1) / sortParam.Limit,
 	}
 
-	baseQuery := sq.Select(selectFields...).From("reviews")
+	baseQuery := sq.Select(selectFields...).From("reviews").Where(sq.Eq{"product_id": productId})
 
 	if includeRatings {
 		baseQuery = baseQuery.
@@ -122,7 +123,7 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool)
 	if err != nil {
 		return nil, nil, err
 	}
-
+	log.Printf("Review with ratings %v", reviewsWithRatings)
 	return reviewsWithRatings, meta, nil
 }
 

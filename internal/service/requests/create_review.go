@@ -2,6 +2,7 @@ package requests
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -16,6 +17,8 @@ func NewCreateReviewRequest(r *http.Request) (resources.CreateReviewRequest, err
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return request, errors.Wrap(err, "failed to unmarshal create review request")
 	}
+	log.Printf("Received ProductID: %d", request.Data.Attributes.ProductId)
+
 	if err := ValidateCreateReviewRequest(request); err != nil {
 		return request, errors.Wrap(err, "Validation failed")
 	}
@@ -28,7 +31,8 @@ func ValidateCreateReviewRequest(r resources.CreateReviewRequest) error {
 		"/data/type":               validation.Validate(&r.Data.Type, validation.Required, validation.In("review")),
 		"/data/id":                 validation.Validate(&r.Data.Id, validation.Required, validation.Min(0)),
 		"/data/attributes":         validation.Validate(&r.Data.Attributes, validation.Required),
+		"/data/attributes/rating":  validation.Validate(&r.Data.Attributes.Rating, validation.Required, validation.Min(1), validation.Max(5)),
 		"/data/attributes/content": validation.Validate(&r.Data.Attributes.Content, validation.Required, validation.Length(10, 255)),
-		"/data/attributes/userId":  validation.Validate(&r.Data.Attributes.UserId, validation.Required, validation.Min(1)),
+		"/data/attributes/userId":  validation.Validate(&r.Data.Attributes.UserId, validation.Required, validation.Min(0)),
 	}.Filter()
 }

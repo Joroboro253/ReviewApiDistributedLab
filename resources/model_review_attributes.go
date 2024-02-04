@@ -5,6 +5,8 @@
 package resources
 
 type ReviewAttributes struct {
-	Content string `json:"content"`
-	UserId  int64  `json:"userId"`
+	Content   string `json:"content"`
+	ProductId int64  `json:"productId"`
+	Rating    int64  `json:"rating"`
+	UserId    int64  `json:"userId"`
 }

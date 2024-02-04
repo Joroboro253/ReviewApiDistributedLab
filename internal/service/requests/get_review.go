@@ -4,9 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/go-chi/chi"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/spf13/cast"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"review_api/resources"
@@ -14,7 +12,6 @@ import (
 
 func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
 	request := resources.ReviewQueryParams{}
-	request.ProductId = cast.ToInt64(chi.URLParam(r, "product_id"))
 
 	limitParam := r.URL.Query().Get("limit")
 	if limitParam != "" {
@@ -48,7 +45,7 @@ func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
 	}
 
 	sortByParam := r.URL.Query().Get("sortBy")
-	if sortByParam != "" && (sortByParam == "date" || sortByParam == "rating" || sortByParam == "name") {
+	if sortByParam != "" && (sortByParam == "date" || sortByParam == "avgRating" || sortByParam == "productRating") {
 		request.SortBy = sortByParam
 	} else {
 		request.SortBy = "date"
@@ -73,7 +70,7 @@ func ValidateGetReviewParameters(r resources.ReviewQueryParams) error {
 		"includeRatings": validation.Validate(&r.IncludeRatings, validation.In(true, false)),
 		"limit":          validation.Validate(&r.Limit, validation.Min(1)),
 		"page":           validation.Validate(&r.Limit, validation.Min(1)),
-		"sortBy":         validation.Validate(&r.SortBy, validation.In("avgRating", "date")),
+		"sortBy":         validation.Validate(&r.SortBy, validation.In("avgRating", "date", "productRating")),
 		"sortDirection":  validation.Validate(&r.SortDirection, validation.In("asc", "desc")),
 	}.Filter()
 }

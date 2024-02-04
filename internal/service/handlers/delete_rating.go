@@ -9,16 +9,16 @@ import (
 	"review_api/internal/service/requests"
 )
 
-func DeleteReviews(w http.ResponseWriter, r *http.Request) {
-	request, err := requests.DeleteReviewRequestByProductID(r)
+func DeleteRating(w http.ResponseWriter, r *http.Request) {
+	request, err := requests.DeleteRatingRequest(r)
 	if err != nil {
 		ape.RenderErr(w, helpers.NewInvalidParamsError())
 		return
 	}
 
-	err = helpers.ReviewsQ(r).DeleteAllByProductId(request.ProductId)
+	err = helpers.RatingsQ(r).DeleteRating(request.RatingId)
 	if err != nil {
-		helpers.Log(r).WithError(err).Error("failed to delete all reviews by product id from DB")
+		helpers.Log(r).WithError(err).Error("failed delete review from DB")
 		ape.RenderErr(w, helpers.NewInternalServerError())
 		return
 	}

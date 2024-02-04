@@ -3,6 +3,7 @@
 CREATE TABLE reviews (
     id SERIAL PRIMARY KEY,
     product_id INT NOT NULL,
+    rating INT NOT NULL,
     user_id INT NOT NULL,
     content TEXT NOT NULL CHECK (length(content) <= 255),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

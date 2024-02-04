@@ -1,0 +1,7 @@
+type: object
+required:
+  - ratingId
+properties:
+  ratingId:
+    type: integer
+    format: int64

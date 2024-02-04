@@ -9,14 +9,14 @@ func ConvertToAPIResponse(reviews []data.ReviewWithRatings, meta *resources.Pagi
 	var apiResponse resources.ReviewApiResponse
 	for _, review := range reviews {
 		resource := resources.ReviewResource{
-			Type:      "reviews",
-			ProductId: review.ProductID,
+			Type: "reviews",
+			Id:   review.ID,
 			Attributes: resources.ReviewGetAttributes{
-				ReviewId:  review.ID,
 				UserId:    review.UserID,
 				Content:   review.Content,
 				CreatedAt: review.CreatedAt,
 				UpdatedAt: review.UpdatedAt,
+				Rating:    review.Rating,
 				AvgRating: review.AvgRating,
 			},
 		}

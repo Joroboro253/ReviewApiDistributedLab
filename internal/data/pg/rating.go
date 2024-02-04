@@ -1,7 +1,6 @@
 package pg
 
 import (
-	"fmt"
 	"log"
 
 	sq "github.com/Masterminds/squirrel"
@@ -16,14 +15,12 @@ import (
 const ratingsTableName = "review_ratings"
 
 type ratingQImpl struct {
-	db  *pgdb.DB
-	sql sq.SelectBuilder
+	db *pgdb.DB
 }
 
 func NewRatingQ(db *pgdb.DB) data.RatingQ {
 	return &ratingQImpl{
-		db:  db.Clone(),
-		sql: sq.Select("r.*").From(fmt.Sprintf("%s as r", reviewsTableName)),
+		db: db.Clone(),
 	}
 }
 
@@ -46,8 +43,8 @@ func (q *ratingQImpl) Insert(rating data.Rating) error {
 func (q *ratingQImpl) UpdateRating(ratingID int64, updateData resources.UpdateRatingData) (data.Rating, error) {
 	updateBuilder := sq.Update(ratingsTableName).Where(sq.Eq{"id": ratingID})
 
-	if updateData.Attributes.ReviewId != 0 {
-		updateBuilder = updateBuilder.Set("review_id", updateData.Attributes.ReviewId)
+	if updateData.Id != 0 {
+		updateBuilder = updateBuilder.Set("review_id", updateData.Id)
 	}
 	if updateData.Attributes.UserId != 0 {
 		updateBuilder = updateBuilder.Set("user_id", updateData.Attributes.UserId)
@@ -65,4 +62,10 @@ func (q *ratingQImpl) UpdateRating(ratingID int64, updateData resources.UpdateRa
 	var updatedRating data.Rating
 
 	return updatedRating, nil
+}
+
+func (q *ratingQImpl) DeleteRating(ratingID int64) error {
+	stmt := sq.Delete(ratingsTableName).Where("id = ?", ratingID)
+	err := q.db.Exec(stmt)
+	return err
 }

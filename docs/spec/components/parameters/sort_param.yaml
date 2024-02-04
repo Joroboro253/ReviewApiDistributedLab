@@ -3,4 +3,8 @@ name: sortBy
 required: false
 schema:
   type: string
-description: 'Sort the results by a specified field, e.g., ''AvgRating'', ''createdAt''.'
+description: |
+  Sort the results by a specified field. Supported fields include:
+   - `date`: Sort by date.
+   - `avgRating`: Sort by average rating.
+   - `productRating`: Sort by rating product.
