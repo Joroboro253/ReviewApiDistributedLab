@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/sirupsen/logrus"
 	"gitlab.com/distributed_lab/ape"
 
 	"review_api/internal/service/helpers"
@@ -12,13 +13,14 @@ import (
 func DeleteReviews(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.DeleteReviewRequestByProductID(r)
 	if err != nil {
+		logrus.WithError(err).Error("Failed to create delete request")
 		ape.RenderErr(w, helpers.NewInvalidParamsError())
 		return
 	}
 
 	err = helpers.ReviewsQ(r).DeleteAllByProductId(request.ProductId)
 	if err != nil {
-		helpers.Log(r).WithError(err).Error("failed to delete all reviews by product id from DB")
+		logrus.WithError(err).Error("Failed to delete review")
 		ape.RenderErr(w, helpers.NewInternalServerError())
 		return
 	}

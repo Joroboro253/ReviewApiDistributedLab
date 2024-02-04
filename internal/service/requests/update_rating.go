@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/sirupsen/logrus"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"review_api/resources"
@@ -13,9 +14,11 @@ import (
 func NewUpdateRatingRequest(r *http.Request) (resources.UpdateRatingRequest, error) {
 	var request resources.UpdateRatingRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		logrus.WithError(err).Error("Failed to unmarshal update rating request")
 		return request, errors.Wrap(err, "failed to unmarshal update rating request")
 	}
 	if err := ValidateUpdateRatingRequest(request); err != nil {
+		logrus.WithError(err).Error("Validation update rating request failed")
 		return request, errors.Wrap(err, "Validation failed")
 	}
 	return request, nil

@@ -1,9 +1,8 @@
 package pg
 
 import (
-	"log"
-
 	sq "github.com/Masterminds/squirrel"
+	"github.com/sirupsen/logrus"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -35,12 +34,13 @@ func (q *ratingQImpl) Insert(rating data.Rating) error {
 
 	err := q.db.Exec(stmt)
 	if err != nil {
+		logrus.WithError(err).Error("Failed to insert rating into database")
 		return errors.Wrap(err, "failed to insert rating")
 	}
 	return nil
 }
 
-func (q *ratingQImpl) UpdateRating(ratingID int64, updateData resources.UpdateRatingData) (data.Rating, error) {
+func (q *ratingQImpl) UpdateRating(ratingID int64, updateData resources.UpdateRatingData) error {
 	updateBuilder := sq.Update(ratingsTableName).Where(sq.Eq{"id": ratingID})
 
 	if updateData.Id != 0 {
@@ -55,17 +55,20 @@ func (q *ratingQImpl) UpdateRating(ratingID int64, updateData resources.UpdateRa
 
 	err := q.db.Exec(updateBuilder)
 	if err != nil {
-		log.Printf("Error execuying querry")
-		return data.Rating{}, err
+		logrus.WithError(err).Error("Failed to execute query")
+		return err
 	}
 
-	var updatedRating data.Rating
-
-	return updatedRating, nil
+	return nil
 }
 
 func (q *ratingQImpl) DeleteRating(ratingID int64) error {
 	stmt := sq.Delete(ratingsTableName).Where("id = ?", ratingID)
 	err := q.db.Exec(stmt)
-	return err
+	if err != nil {
+		logrus.WithError(err).Error("Failed to execute delete rating query")
+		return err
+	}
+
+	return nil
 }

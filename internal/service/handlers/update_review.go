@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/sirupsen/logrus"
 	"gitlab.com/distributed_lab/ape"
 
 	"review_api/internal/service/helpers"
@@ -13,12 +14,13 @@ import (
 func UpdateReview(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewUpdateReviewRequest(r)
 	if err != nil {
+		logrus.WithError(err).Error("Failed to create update review request")
 		ape.RenderErr(w, helpers.NewInvalidParamsError())
 		return
 	}
 
 	var updateData resources.UpdateReviewData
-
+	updateData.Id = request.Data.Id
 	if request.Data.Attributes.ProductId != 0 {
 		updateData.Attributes.ProductId = request.Data.Attributes.ProductId
 	}
@@ -29,13 +31,12 @@ func UpdateReview(w http.ResponseWriter, r *http.Request) {
 		updateData.Attributes.Content = request.Data.Attributes.Content
 	}
 
-	reviewQ := helpers.ReviewsQ(r)
-
-	_, err = reviewQ.UpdateReview(request.Data.Id, updateData)
+	err = helpers.ReviewsQ(r).UpdateReview(updateData)
 	if err != nil {
+		logrus.WithError(err).Error("Failed to update review")
 		ape.RenderErr(w, helpers.NewInternalServerError())
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }

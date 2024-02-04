@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/sirupsen/logrus"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"review_api/resources"
@@ -17,6 +18,7 @@ func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
 	if limitParam != "" {
 		parsedLimit, err := strconv.ParseInt(limitParam, 10, 64)
 		if err != nil {
+			logrus.WithError(err).Error("Bad limit parameter")
 			return request, errors.Wrap(err, "bad limit parameter")
 		}
 		request.Limit = parsedLimit
@@ -28,7 +30,8 @@ func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
 	if includeRatingsParam != "" {
 		parsedIncludeRatings, err := strconv.ParseBool(includeRatingsParam)
 		if err != nil {
-			return request, errors.Wrap(err, "bad include rating param")
+			logrus.WithError(err).Error("Bad include rating parameter")
+			return request, errors.Wrap(err, "bad include rating parameter")
 		}
 		request.IncludeRatings = parsedIncludeRatings
 	}
@@ -37,6 +40,7 @@ func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
 	if pageParam != "" {
 		parsedPageParam, err := strconv.ParseInt(pageParam, 10, 64)
 		if err != nil {
+			logrus.WithError(err).Error("Bad page parameter")
 			return request, errors.Wrap(err, "bad page parameter")
 		}
 		request.Page = parsedPageParam
@@ -59,6 +63,7 @@ func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
 	}
 
 	if err := ValidateGetReviewParameters(request); err != nil {
+		logrus.WithError(err).Error("Validation of get review params failed")
 		return request, errors.Wrap(err, "Validation failed")
 	}
 

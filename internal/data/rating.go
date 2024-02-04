@@ -9,7 +9,7 @@ import (
 type RatingQ interface {
 	New() RatingQ
 	Insert(rating Rating) error
-	UpdateRating(ratingID int64, updateData resources.UpdateRatingData) (Rating, error)
+	UpdateRating(ratingID int64, updateData resources.UpdateRatingData) error
 	DeleteRating(ratingID int64) error
 }
 
