@@ -102,7 +102,8 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool,
 
 	if includeRatings {
 		baseQuery = baseQuery.
-			Column("COALESCE(AVG(review_ratings.rating), 0) AS avg_rating").
+			Column("AVG(review_ratings.rating) AS avg_rating").
+			Column("COUNT(review_ratings.rating) AS ratings_count").
 			LeftJoin("review_ratings ON reviews.id = review_ratings.review_id").
 			GroupBy("reviews.id", "reviews.product_id", "reviews.user_id", "reviews.content", "reviews.created_at", "reviews.updated_at")
 	}

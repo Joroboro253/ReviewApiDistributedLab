@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/go-chi/chi"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/sirupsen/logrus"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -11,15 +12,21 @@ import (
 	"review_api/resources"
 )
 
-func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
+func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, int64, error) {
 	request := resources.ReviewQueryParams{}
+
+	productId, err := strconv.ParseInt(chi.URLParam(r, "product_id"), 10, 64)
+	if err != nil {
+		logrus.WithError(err).Error("Failed parse Id from request")
+		return request, productId, errors.Wrap(err, "failed parse Id from request")
+	}
 
 	limitParam := r.URL.Query().Get("limit")
 	if limitParam != "" {
 		parsedLimit, err := strconv.ParseInt(limitParam, 10, 64)
 		if err != nil {
 			logrus.WithError(err).Error("Bad limit parameter")
-			return request, errors.Wrap(err, "bad limit parameter")
+			return request, productId, errors.Wrap(err, "bad limit parameter")
 		}
 		request.Limit = parsedLimit
 	} else {
@@ -31,7 +38,7 @@ func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
 		parsedIncludeRatings, err := strconv.ParseBool(includeRatingsParam)
 		if err != nil {
 			logrus.WithError(err).Error("Bad include rating parameter")
-			return request, errors.Wrap(err, "bad include rating parameter")
+			return request, productId, errors.Wrap(err, "bad include rating parameter")
 		}
 		request.IncludeRatings = parsedIncludeRatings
 	}
@@ -41,7 +48,7 @@ func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
 		parsedPageParam, err := strconv.ParseInt(pageParam, 10, 64)
 		if err != nil {
 			logrus.WithError(err).Error("Bad page parameter")
-			return request, errors.Wrap(err, "bad page parameter")
+			return request, productId, errors.Wrap(err, "bad page parameter")
 		}
 		request.Page = parsedPageParam
 	} else {
@@ -64,10 +71,10 @@ func NewGetReviewRequest(r *http.Request) (resources.ReviewQueryParams, error) {
 
 	if err := ValidateGetReviewParameters(request); err != nil {
 		logrus.WithError(err).Error("Validation of get review params failed")
-		return request, errors.Wrap(err, "Validation failed")
+		return request, productId, errors.Wrap(err, "Validation failed")
 	}
 
-	return request, nil
+	return request, productId, nil
 }
 
 func ValidateGetReviewParameters(r resources.ReviewQueryParams) error {

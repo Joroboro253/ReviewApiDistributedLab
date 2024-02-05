@@ -6,6 +6,7 @@ required:
   - updatedAt
   - avgRating
   - rating
+  - ratingCount
 properties:
   userId:
     type: integer
@@ -30,3 +31,7 @@ properties:
     type: integer
     format: int64
     example: 3
+  ratingCount:
+    type: integer
+    format: int64
+    example: 2
