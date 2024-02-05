@@ -2,9 +2,9 @@ package pg
 
 import (
 	"fmt"
-	"log"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/sirupsen/logrus"
 
 	"review_api/resources"
 
@@ -47,20 +47,20 @@ func (q *reviewQImpl) New() data.ReviewQ {
 }
 
 func (q *reviewQImpl) Insert(review data.Review) error {
-	log.Printf("Product id: %d", review.ProductID)
 	stmt := sq.Insert(reviewsTableName).
 		Columns("product_id", "user_id", "content", "rating").
 		Values(review.ProductID, review.UserID, review.Content, review.Rating)
 
 	err := q.db.Exec(stmt)
 	if err != nil {
+		logrus.WithError(err).Error("Failed to prepare SQL for inserting review")
 		return errors.Wrap(err, "failed to insert review")
 	}
 	return nil
 }
 
-func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateReviewData) (data.Review, error) {
-	updateBuilder := sq.Update(reviewsTableName).Where(sq.Eq{"id": reviewID})
+func (q *reviewQImpl) UpdateReview(updateData resources.UpdateReviewData) error {
+	updateBuilder := sq.Update(reviewsTableName).Where(sq.Eq{"id": updateData.Id})
 
 	if updateData.Attributes.ProductId != 0 {
 		updateBuilder = updateBuilder.Set("product_id", updateData.Attributes.ProductId)
@@ -74,13 +74,10 @@ func (q *reviewQImpl) UpdateReview(reviewID int64, updateData resources.UpdateRe
 
 	err := q.db.Exec(updateBuilder)
 	if err != nil {
-		log.Printf("Error executing querry")
-		return data.Review{}, err
+		logrus.WithError(err).Error("Failed to execute update review query")
+		return err
 	}
-
-	var updatedReview data.Review
-
-	return updatedReview, nil
+	return err
 }
 
 func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool, productId int64) ([]data.ReviewWithRatings, *resources.PaginationMeta, error) {
@@ -105,7 +102,8 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool,
 
 	if includeRatings {
 		baseQuery = baseQuery.
-			Column("COALESCE(AVG(review_ratings.rating), 0) AS avg_rating").
+			Column("AVG(review_ratings.rating) AS avg_rating").
+			Column("COUNT(review_ratings.rating) AS ratings_count").
 			LeftJoin("review_ratings ON reviews.id = review_ratings.review_id").
 			GroupBy("reviews.id", "reviews.product_id", "reviews.user_id", "reviews.content", "reviews.created_at", "reviews.updated_at")
 	}
@@ -121,14 +119,19 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool,
 
 	err = q.db.Select(&reviewsWithRatings, query)
 	if err != nil {
+		logrus.WithError(err).Error("Failed to select reviews")
 		return nil, nil, err
 	}
-	log.Printf("Review with ratings %v", reviewsWithRatings)
+	logrus.Infof("Successfully selected reviews with ratings for product id: %d", productId)
 	return reviewsWithRatings, meta, nil
 }
 
 func (q *reviewQImpl) DeleteAllByProductId(productId int64) error {
-	log.Printf("ID: %d", productId)
 	stmt := sq.Delete(reviewsTableName).Where("product_id = ?", productId)
+	return q.db.Exec(stmt)
+}
+
+func (q *reviewQImpl) DeleteReview(reviewId int64) error {
+	stmt := sq.Delete(reviewsTableName).Where("id = ?", reviewId)
 	return q.db.Exec(stmt)
 }

@@ -30,6 +30,7 @@ func (s *service) router() chi.Router {
 		r.Route("/{review_id}", func(r chi.Router) {
 			r.Patch("/", handlers.UpdateReview)
 			r.Post("/", handlers.CreateRating)
+			r.Delete("/", handlers.DeleteReview)
 			r.Patch("/ratings/{rating_id}", handlers.UpdateRating)
 			r.Delete("/ratings/{rating_id}", handlers.DeleteRating)
 		})

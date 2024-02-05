@@ -13,7 +13,7 @@ post:
         schema:
           $ref: '#/components/schemas/CreateRatingRequest'
   responses:
-    '201':
+    '200':
       description: Rating created successfully
     '400':
       description: Invalid request parameters
@@ -50,6 +50,35 @@ patch:
   responses:
     '201':
       description: Review updated successfully
+    '400':
+      description: Invalid request parameters
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/JsonApiErrors'
+          examples:
+            BadRequestExample:
+              $ref: '#/components/examples/BadRequestError'
+    '500':
+      description: Internal server error
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/JsonApiErrors'
+          examples:
+            InternalServerErrorExample:
+              $ref: '#/components/examples/InternalServerError'
+delete:
+  tags:
+    - Review
+  summary: Delete review by review id
+  operationId: deleteByReviewId
+  parameters:
+    - $ref: '#/components/parameters/product_id'
+    - $ref: '#/components/parameters/review_id'
+  responses:
+    '201':
+      description: Review deleted successfully
     '400':
       description: Invalid request parameters
       content:

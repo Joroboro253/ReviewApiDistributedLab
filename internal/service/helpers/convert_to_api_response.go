@@ -12,12 +12,13 @@ func ConvertToAPIResponse(reviews []data.ReviewWithRatings, meta *resources.Pagi
 			Type: "reviews",
 			Id:   review.ID,
 			Attributes: resources.ReviewGetAttributes{
-				UserId:    review.UserID,
-				Content:   review.Content,
-				CreatedAt: review.CreatedAt,
-				UpdatedAt: review.UpdatedAt,
-				Rating:    review.Rating,
-				AvgRating: review.AvgRating,
+				UserId:      review.UserID,
+				Content:     review.Content,
+				CreatedAt:   review.CreatedAt,
+				UpdatedAt:   review.UpdatedAt,
+				Rating:      review.Rating,
+				RatingCount: review.RatingsCount,
+				AvgRating:   review.AvgRating,
 			},
 		}
 		apiResponse.Data = append(apiResponse.Data, resource)

@@ -14,7 +14,7 @@ patch:
         schema:
           $ref: '#/components/schemas/UpdateRatingRequest'
   responses:
-    '201':
+    '200':
       description: Rating updated successfully
     '400':
       description: Invalid request parameters

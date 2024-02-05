@@ -2,10 +2,10 @@ package requests
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/sirupsen/logrus"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"review_api/resources"
@@ -15,11 +15,12 @@ func NewCreateReviewRequest(r *http.Request) (resources.CreateReviewRequest, err
 	var request resources.CreateReviewRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		logrus.WithError(err).Error("Failed to decode create review request")
 		return request, errors.Wrap(err, "failed to unmarshal create review request")
 	}
-	log.Printf("Received ProductID: %d", request.Data.Attributes.ProductId)
 
 	if err := ValidateCreateReviewRequest(request); err != nil {
+		logrus.WithError(err).Error("Validation of create review request failed")
 		return request, errors.Wrap(err, "Validation failed")
 	}
 	return request, nil
