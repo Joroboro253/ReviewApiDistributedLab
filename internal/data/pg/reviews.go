@@ -130,3 +130,8 @@ func (q *reviewQImpl) DeleteAllByProductId(productId int64) error {
 	stmt := sq.Delete(reviewsTableName).Where("product_id = ?", productId)
 	return q.db.Exec(stmt)
 }
+
+func (q *reviewQImpl) DeleteReview(reviewId int64) error {
+	stmt := sq.Delete(reviewsTableName).Where("id = ?", reviewId)
+	return q.db.Exec(stmt)
+}

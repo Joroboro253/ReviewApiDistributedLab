@@ -10,17 +10,17 @@ import (
 	"review_api/internal/service/requests"
 )
 
-func DeleteReviews(w http.ResponseWriter, r *http.Request) {
-	request, err := requests.DeleteReviewRequestByProductID(r)
+func DeleteReview(w http.ResponseWriter, r *http.Request) {
+	request, err := requests.DeleteReviewRequest(r)
 	if err != nil {
-		logrus.WithError(err).Error("Failed to create delete all review request")
+		logrus.WithError(err).Error("Failed to create delete review request")
 		ape.RenderErr(w, helpers.NewInvalidParamsError())
 		return
 	}
-
-	err = helpers.ReviewsQ(r).DeleteAllByProductId(request.ProductId)
+	logrus.Printf("Review id: %d", request.ReviewId)
+	err = helpers.ReviewsQ(r).DeleteReview(request.ReviewId)
 	if err != nil {
-		logrus.WithError(err).Error("Failed to delete review")
+		logrus.WithError(err).Error("failed to delete rating")
 		ape.RenderErr(w, helpers.NewInternalServerError())
 		return
 	}
