@@ -12,7 +12,8 @@ import (
 )
 
 func UpdateRating(w http.ResponseWriter, r *http.Request) {
-	request, err := requests.NewUpdateRatingRequest(r)
+	request, ratingId, err := requests.NewUpdateRatingRequest(r)
+
 	if err != nil {
 		logrus.WithError(err).Error("Failed to create update rating request")
 		ape.RenderErr(w, helpers.NewInvalidParamsError())
@@ -22,9 +23,6 @@ func UpdateRating(w http.ResponseWriter, r *http.Request) {
 	ratingQ := helpers.RatingsQ(r)
 	var updateData resources.UpdateRatingData
 
-	if request.Data.Id != 0 {
-		updateData.Attributes.ReviewId = request.Data.Attributes.ReviewId
-	}
 	if request.Data.Attributes.UserId != 0 {
 		updateData.Attributes.UserId = request.Data.Attributes.UserId
 	}
@@ -32,7 +30,7 @@ func UpdateRating(w http.ResponseWriter, r *http.Request) {
 		updateData.Attributes.Rating = request.Data.Attributes.Rating
 	}
 
-	err = ratingQ.UpdateRating(request.Data.Id, updateData)
+	err = ratingQ.UpdateRating(ratingId, updateData)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to update rating")
 		ape.RenderErr(w, helpers.NewInternalServerError())

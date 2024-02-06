@@ -12,7 +12,7 @@ import (
 )
 
 func CreateRating(w http.ResponseWriter, r *http.Request) {
-	request, err := requests.NewCreateRatingRequest(r)
+	request, reviewId, err := requests.NewCreateRatingRequest(r)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to create new rating request")
 		ape.RenderErr(w, helpers.NewInvalidParamsError())
@@ -20,7 +20,7 @@ func CreateRating(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = helpers.RatingsQ(r).Insert(data.Rating{
-		ReviewID: request.Data.Attributes.ReviewId,
+		ReviewID: reviewId,
 		UserID:   request.Data.Attributes.UserId,
 		Rating:   request.Data.Attributes.Rating,
 	})

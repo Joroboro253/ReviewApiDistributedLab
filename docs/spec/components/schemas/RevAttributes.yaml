@@ -3,6 +3,7 @@ required:
   - productId
   - userId
   - content
+  - rating
 properties:
   productId:
     type: integer
@@ -15,4 +16,7 @@ properties:
   content:
     type: string
     example: Product broke on second day of use
-
+  rating:
+    type: integer
+    format: int64
+    example: 5

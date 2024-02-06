@@ -68,6 +68,9 @@ func (q *reviewQImpl) UpdateReview(updateData resources.UpdateReviewData) error 
 	if updateData.Attributes.UserId != 0 {
 		updateBuilder = updateBuilder.Set("user_id", updateData.Attributes.UserId)
 	}
+	if updateData.Attributes.Rating != 0 {
+		updateBuilder = updateBuilder.Set("rating", updateData.Attributes.Rating)
+	}
 	if updateData.Attributes.Content != "" {
 		updateBuilder = updateBuilder.Set("content", updateData.Attributes.Content)
 	}
@@ -88,6 +91,7 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool,
 	countQuery := sq.Select("COUNT(*)").From(reviewsTableName).Where(sq.Eq{"product_id": productId})
 	err := q.db.Get(&totalCount, countQuery)
 	if err != nil {
+		logrus.WithError(err).Error("Failed to execute select review query")
 		return nil, nil, err
 	}
 
@@ -102,7 +106,7 @@ func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool,
 
 	if includeRatings {
 		baseQuery = baseQuery.
-			Column("AVG(review_ratings.rating) AS avg_rating").
+			Column("COALESCE(AVG(review_ratings.rating), 0) AS avg_rating").
 			Column("COUNT(review_ratings.rating) AS ratings_count").
 			LeftJoin("review_ratings ON reviews.id = review_ratings.review_id").
 			GroupBy("reviews.id", "reviews.product_id", "reviews.user_id", "reviews.content", "reviews.created_at", "reviews.updated_at")

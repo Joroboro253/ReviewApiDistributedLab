@@ -2,14 +2,9 @@ type: object
 required:
   - attributes
   - type
-  - id
 properties:
   type:
     type: string
     example: rating
-  id:
-    type: integer
-    format: int64
-    example: 1
   attributes:
     $ref: '#/components/schemas/RatingAttributes'

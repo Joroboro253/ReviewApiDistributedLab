@@ -71,7 +71,7 @@ patch:
 delete:
   tags:
     - Review
-  summary: Delete review by review id
+  summary: Delete by review id
   operationId: deleteByReviewId
   parameters:
     - $ref: '#/components/parameters/product_id'

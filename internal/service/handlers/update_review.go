@@ -12,7 +12,7 @@ import (
 )
 
 func UpdateReview(w http.ResponseWriter, r *http.Request) {
-	request, err := requests.NewUpdateReviewRequest(r)
+	request, reviewId, err := requests.NewUpdateReviewRequest(r)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to create update review request")
 		ape.RenderErr(w, helpers.NewInvalidParamsError())
@@ -20,12 +20,15 @@ func UpdateReview(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var updateData resources.UpdateReviewData
-	updateData.Id = request.Data.Id
+	updateData.Id = reviewId
 	if request.Data.Attributes.ProductId != 0 {
 		updateData.Attributes.ProductId = request.Data.Attributes.ProductId
 	}
 	if request.Data.Attributes.UserId != 0 {
 		updateData.Attributes.UserId = request.Data.Attributes.UserId
+	}
+	if request.Data.Attributes.Rating != 0 {
+		updateData.Attributes.Rating = request.Data.Attributes.Rating
 	}
 	if request.Data.Attributes.Content != "" {
 		updateData.Attributes.Content = request.Data.Attributes.Content
