@@ -5,6 +5,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/ape/problems"
 
 	"review_api/internal/service/helpers"
 	"review_api/internal/service/requests"
@@ -15,7 +16,7 @@ func UpdateReview(w http.ResponseWriter, r *http.Request) {
 	request, reviewId, err := requests.NewUpdateReviewRequest(r)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to create update review request")
-		ape.RenderErr(w, helpers.NewInvalidParamsError())
+		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
