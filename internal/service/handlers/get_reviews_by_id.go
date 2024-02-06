@@ -29,5 +29,5 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ape.Render(w, helpers.ConvertToAPIResponse(reviews, meta))
+	ape.Render(w, helpers.ConvertToJSONResponse(reviews, meta))
 }

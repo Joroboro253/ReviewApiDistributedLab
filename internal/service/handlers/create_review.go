@@ -12,19 +12,19 @@ import (
 )
 
 func CreateReview(w http.ResponseWriter, r *http.Request) {
-	request, err := requests.NewCreateReviewRequest(r)
+	request, productId, err := requests.NewCreateReviewRequest(r)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to create new review request")
 		ape.RenderErr(w, helpers.NewInvalidParamsError())
 		return
 	}
+	//logrus.Printf("Request id: %d", request.Data.Id)
 
 	err = helpers.ReviewsQ(r).Insert(data.Review{
-		ID:        request.Data.Id,
 		UserID:    request.Data.Attributes.UserId,
 		Content:   request.Data.Attributes.Content,
 		Rating:    request.Data.Attributes.Rating,
-		ProductID: request.Data.Attributes.ProductId,
+		ProductID: productId,
 	})
 
 	if err != nil {

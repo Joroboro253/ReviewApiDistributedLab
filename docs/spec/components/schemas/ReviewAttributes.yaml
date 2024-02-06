@@ -3,7 +3,6 @@ required:
   - userId
   - content
   - rating
-  - productId
 properties:
   userId:
     type: integer
@@ -16,7 +15,3 @@ properties:
     type: integer
     format: int64
     example: 5
-  productId:
-    type: integer
-    format: int64
-    example: 1

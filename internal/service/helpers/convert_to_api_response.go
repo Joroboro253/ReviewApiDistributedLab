@@ -5,7 +5,7 @@ import (
 	"review_api/resources"
 )
 
-func ConvertToAPIResponse(reviews []data.ReviewWithRatings, meta *resources.PaginationMeta) resources.ReviewApiResponse {
+func ConvertToJSONResponse(reviews []data.ReviewWithRatings, meta *resources.PaginationMeta) resources.ReviewApiResponse {
 	var apiResponse resources.ReviewApiResponse
 	for _, review := range reviews {
 		resource := resources.ReviewResource{
