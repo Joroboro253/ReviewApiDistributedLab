@@ -23,10 +23,6 @@ func CtxLog(entry *logan.Entry) func(context.Context) context.Context {
 	}
 }
 
-func Log(r *http.Request) *logan.Entry {
-	return r.Context().Value(logCtxKey).(*logan.Entry)
-}
-
 func CtxReviewsQ(entry data.ReviewQ) func(context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		return context.WithValue(ctx, reviewsQCtxKey, entry)

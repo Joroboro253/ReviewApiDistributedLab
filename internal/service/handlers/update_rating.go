@@ -5,6 +5,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/ape/problems"
 
 	"review_api/internal/service/helpers"
 	"review_api/internal/service/requests"
@@ -16,7 +17,7 @@ func UpdateRating(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		logrus.WithError(err).Error("Failed to create update rating request")
-		ape.RenderErr(w, helpers.NewInvalidParamsError())
+		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 

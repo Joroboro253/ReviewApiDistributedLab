@@ -86,7 +86,6 @@ func (q *reviewQImpl) UpdateReview(updateData resources.UpdateReviewData) error 
 func (q *reviewQImpl) Select(sortParam resources.SortParam, includeRatings bool, productId int64) ([]data.ReviewWithRatings, *resources.PaginationMeta, error) {
 	var reviewsWithRatings []data.ReviewWithRatings
 
-	// Getting amount of reviews for metadata
 	var totalCount int64
 	countQuery := sq.Select("COUNT(*)").From(reviewsTableName).Where(sq.Eq{"product_id": productId})
 	err := q.db.Get(&totalCount, countQuery)

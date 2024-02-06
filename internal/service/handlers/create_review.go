@@ -5,6 +5,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/ape/problems"
 
 	"review_api/internal/data"
 	"review_api/internal/service/helpers"
@@ -15,10 +16,9 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 	request, productId, err := requests.NewCreateReviewRequest(r)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to create new review request")
-		ape.RenderErr(w, helpers.NewInvalidParamsError())
+		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-	//logrus.Printf("Request id: %d", request.Data.Id)
 
 	err = helpers.ReviewsQ(r).Insert(data.Review{
 		UserID:    request.Data.Attributes.UserId,
